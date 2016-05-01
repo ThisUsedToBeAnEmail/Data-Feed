@@ -23,8 +23,6 @@ sub parse {
 
     my @feed;
     foreach my $item ( @{ $rss->{items} } ) {
-        warn Dumper $item;
-        die;
         my %args = (
             title => $item->{title},   
             link => $item->{link},
