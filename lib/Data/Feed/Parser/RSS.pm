@@ -23,12 +23,13 @@ sub parse {
 
     my @feed;
     foreach my $item ( @{ $rss->{items} } ) {
+        warn Dumper $item;
+        die;
         my %args = (
             title => $item->{title},   
             link => $item->{link},
             description => $item->{description},
-            tagline => $item->{tagline},
-            icon => $item->{icon},
+            pubDate => $item->{pubDate},
             as_xml => $item
         );
         

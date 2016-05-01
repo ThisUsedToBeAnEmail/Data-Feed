@@ -10,7 +10,7 @@ use XML::RSS::LibXML;
 our $VERSION = '0.01';
 
 has [ 
-    qw(title link description tagline icon as_xml)
+    qw(title link description pubDate as_xml)
     ] => (
     is  => 'ro',
     lazy => 1,
