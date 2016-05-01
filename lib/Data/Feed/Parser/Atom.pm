@@ -1,142 +1,36 @@
-package Data::Feed;
+package Data::Feed::Parser::Atom;
 
 use Moo;
-use Carp qw(croak);
-use LWP::UserAgent;
-use Data::Feed::Parser::RSS;
-use Data::Feed::Parser::Atom;
-use 5.006;
+use Carp qw/croak/;
 use Data::Dumper;
-=head1 NAME
-
-Data::Feed - The great new Data::Feed!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
+use XML::Atom::Feed;
+use Data::Feed::Object;
 
 our $VERSION = '0.01';
 
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Data::Feed;
-
-    my $foo = Data::Feed->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
-
 sub parse {
-    my ($self, $stream) = @_;
-
-    if (!$stream) {
-        croak "No stream was provided to parse().";
-    }
-    
-    my $content_ref = $self->fetch_stream($stream);
-
-    my $parser = $self->find_parser( $content_ref );
-    warn Dumper 'I make it here';
-    return $parser->parse( $content_ref );
-}
-
-=head2 function2
-
-=cut
-
-sub fetch_stream {
-    my ($self, $stream) = @_;
-
-    my $content = '';
-    my $ref = ref $stream || '';
-
-    if ( $stream =~ m{^http}xms ){
-        $content = $self->_url_stream($stream);
-    }
-    elsif ( $ref eq 'SCALAR' ) {
-        $content = $$stream;
-    }
-    elsif ( $ref eq 'GLOB' ) {
-        $content = do { local $/; <$stream> };
-    }
-    else {
-        open ( my $fh, '<', $stream ) or croak "could not open file: $stream";
+    my ($self, $content_ref) = @_;
+     
+    my $feed = XML::Atom::Feed->new($content_ref);
+    my @entries = $feed->entries; 
+    my @feed;
+    foreach my $item ( @entries ) {
+        my %args = (
+            title => $item->title,   
+            link => $item->link->href,
+            description => $item->summary,
+            pubDate => $item->updated,
+            as_xml => $item->as_xml
+        );
         
-        $content = do { local $/; <$fh> };
-        close $fh
+        my $object = Data::Feed::Object->new(%args);
+        push @feed, $object;
     }
 
-    return \$content;
+    return \@feed;
 }
 
-sub find_parser {
-    my ($self, $content_ref) = @_;
-
-    my $format = $self->guess_format( $content_ref );
-
-    croak "Unable to guess format from stream content" unless $format;
-
-    my $class = 'Data::Feed::Parser::' . $format;
-
-    return $class->new();
-}
-
-sub guess_format {
-    my ($self, $content_ref) = @_;
-    
-    my $tag;
-
-    while ($$content_ref =~ /<(\S+)/sg) {
-        (my $t = $1) =~ tr/a-zA-Z0-9:\-\?!//cd;
-        my $first = substr $t, 0, 1;
-        $tag = $t, last unless $first eq '?' || $first eq '!';
-    }
-
-    croak 'Coult not find the first XML element' unless $tag;
-
-    $tag =~ s/^.*://;
-
-    if ($tag =~ /^(?:rss|rdf)$/i) {
-        return 'RSS';
-    } elsif ($tag =~ /^feed/i) {
-        return 'Atom';
-    }
-
-    return ();
-}
-
-sub _url_stream {
-    my ($self, $stream) = @_;
-    
-    my $ua = LWP::UserAgent->new();
-    $ua->env_proxy;
-    my $req = HTTP::Request->new( GET => $stream );
-    $req->header( 'Accept-Encoding', 'gzip' );
-    my $res = $ua->request($req) or croak "Failed to fetch URI: $stream";
-    
-    if ( $res->code == 410 ) {
-       croak "This feed has been permanently removed";
-    }
-
-    return $res->decoded_content(charset => 'none');
-
-}
-
+__PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR
 
@@ -147,9 +41,6 @@ LNATION, C<< <thisusedtobeanemail at gmail.com> >>
 Please report any bugs or feature requests to C<bug-data-feed at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-Feed>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 

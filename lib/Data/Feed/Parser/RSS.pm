@@ -1,25 +1,17 @@
 package Data::Feed::Parser::RSS;
 
 use Moo;
-#extends 'Data::Feed::Parser::Base';
-use Data::Feed::RSS;
 use Carp qw/croak/;
 use Data::Dumper;
 use XML::RSS::LibXML;
 use Data::Feed::Object;
-
-has feed => (
-    is => 'rw',
-    lazy => 1,
-    default => sub { return XML::RSS::LibXML->new(); }
-);
 
 our $VERSION = '0.01';
 
 sub parse {
     my ($self, $content_ref) = @_;
      
-    my $rss = $self->feed->parse($content_ref);
+    my $rss = XML::RSS::LibXML->new->parse($content_ref);
 
     my @feed;
     foreach my $item ( @{ $rss->{items} } ) {
