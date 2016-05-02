@@ -1,39 +1,34 @@
-package Data::Feed::Parser::RSS;
+package Data::Feed::Parser::Base;
 
 use Moo;
-extends 'Data::Feed::Parser::Base';
-use XML::RSS::LibXML;
+use Data::Feed::Object;
 
 our $VERSION = '0.01';
 
-has '+parser' => (
-    default => sub {
-        my $self = shift;
-        return XML::RSS::LibXML->new->parse($self->content_ref);
-    },
+has 'content_ref' => (
+    is      => 'rw',
+    lazy    => 1,
+    default => q{},
 );
 
-has '+feed' => (
-    default => sub {
-        my $self = shift;
-
-        my @feed;
-        foreach my $item ( @{ $self->parser->{items} } ) {
-            my %args = (
-                title   => $item->{title},
-                link    => $item->{link},
-                description => $item->{description},
-                pubDate => $item->{pubDate},
-                as_xml  => $item
-            );
-
-            my $object = Data::Feed::Object->new(%args);
-            push @feed, $object;
-        } 
-
-        return \@feed;
-   }
+has 'parser' => (
+    is      => 'rw',
+    lazy    => 1,
+    default => q{},
 );
+
+has 'feed' => (
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { [ ] },
+);
+
+sub parse {
+    my ($self, $content_ref) = shift;
+    
+    return $self->feed;
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

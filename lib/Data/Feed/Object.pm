@@ -1,11 +1,8 @@
 package Data::Feed::Object;
 
 use Moo;
-#extends 'Data::Feed::Parser::Base';
-use Data::Feed::RSS;
 use Carp qw/croak/;
 use Data::Dumper;
-use XML::RSS::LibXML;
 
 our $VERSION = '0.01';
 

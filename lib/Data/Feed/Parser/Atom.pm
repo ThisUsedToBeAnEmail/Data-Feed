@@ -1,34 +1,39 @@
 package Data::Feed::Parser::Atom;
 
-use Moo;
-use Carp qw/croak/;
-use Data::Dumper;
+use Moose;
+extends 'Data::Feed::Parser::Base';
 use XML::Atom::Feed;
-use Data::Feed::Object;
 
 our $VERSION = '0.01';
 
-sub parse {
-    my ($self, $content_ref) = @_;
-     
-    my $feed = XML::Atom::Feed->new($content_ref);
-    my @entries = $feed->entries; 
-    my @feed;
-    foreach my $item ( @entries ) {
-        my %args = (
-            title => $item->title,   
-            link => $item->link->href,
-            description => $item->summary,
-            pubDate => $item->updated,
-            as_xml => $item->as_xml
-        );
-        
-        my $object = Data::Feed::Object->new(%args);
-        push @feed, $object;
+has '+parser' => (
+    default => sub {
+        my $self = shift;
+        return XML::Atom::Feed->new($self->content_ref);
     }
+);
 
-    return \@feed;
-}
+has '+feed' => (
+    default => sub {
+        my $self = shift;
+
+        my @feed;
+        foreach my $item ( $self->parser->entries ) {
+            my %args = (
+                title => $item->title,   
+                link => $item->link->href,
+                description => $item->summary,
+                pubDate => $item->updated,
+                as_xml => $item->as_xml
+            );
+        
+            my $object = Data::Feed::Object->new(%args);
+            push @feed, $object;
+        }
+
+        return \@feed;
+    }
+);
 
 __PACKAGE__->meta->make_immutable;
 

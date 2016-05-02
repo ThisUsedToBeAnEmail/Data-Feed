@@ -7,39 +7,8 @@ use Data::Feed::Parser::RSS;
 use Data::Feed::Parser::Atom;
 use 5.006;
 use Data::Dumper;
-=head1 NAME
-
-Data::Feed - The great new Data::Feed!
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
 
 our $VERSION = '0.01';
-
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Data::Feed;
-
-    my $foo = Data::Feed->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
 
 sub parse {
     my ($self, $stream) = @_;
@@ -93,7 +62,7 @@ sub find_parser {
 
     my $class = 'Data::Feed::Parser::' . $format;
 
-    return $class->new();
+    return $class->new(content_ref => $content_ref);
 }
 
 sub guess_format {
