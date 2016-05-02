@@ -2,110 +2,49 @@ package Data::Feed;
 
 use Moo;
 use Carp qw(croak);
-use LWP::UserAgent;
-use Data::Feed::Parser::RSS;
-use Data::Feed::Parser::Atom;
+use Data::Feed::Parser;
+use Data::Feed::Stream;
+
 use 5.006;
-use Data::Dumper;
 
 our $VERSION = '0.01';
+
+has 'stream' => (
+    is   => 'rw',
+    lazy => 1,
+    default => q{},
+);
+
+has 'fetch_stream' => (
+    is   => 'ro',
+    lazy => 1,
+    default => sub { 
+        return Data::Feed::Stream->new(stream => shift->stream) 
+    }
+);
+
+has 'parser' => (
+    is   => 'ro',
+    lazy => 1,
+    default => sub { 
+        return Data::Feed::Parser->new(stream => shift->fetch_stream->open_stream) 
+    }
+);
 
 sub parse {
     my ($self, $stream) = @_;
 
+    $stream ||= $self->stream;
+
+    $self->stream($stream);
+
     if (!$stream) {
         croak "No stream was provided to parse().";
     }
-    
-    my $content_ref = $self->fetch_stream($stream);
-
-    my $parser = $self->find_parser( $content_ref );
-    warn Dumper 'I make it here';
-    return $parser->parse( $content_ref );
+   
+    my $parser = $self->parser->parse;
+    return $parser->parse;
 }
-
-=head2 function2
-
-=cut
-
-sub fetch_stream {
-    my ($self, $stream) = @_;
-
-    my $content = '';
-    my $ref = ref $stream || '';
-
-    if ( $stream =~ m{^http}xms ){
-        $content = $self->_url_stream($stream);
-    }
-    elsif ( $ref eq 'SCALAR' ) {
-        $content = $$stream;
-    }
-    elsif ( $ref eq 'GLOB' ) {
-        $content = do { local $/; <$stream> };
-    }
-    else {
-        open ( my $fh, '<', $stream ) or croak "could not open file: $stream";
-        
-        $content = do { local $/; <$fh> };
-        close $fh
-    }
-
-    return \$content;
-}
-
-sub find_parser {
-    my ($self, $content_ref) = @_;
-
-    my $format = $self->guess_format( $content_ref );
-
-    croak "Unable to guess format from stream content" unless $format;
-
-    my $class = 'Data::Feed::Parser::' . $format;
-
-    return $class->new(content_ref => $content_ref);
-}
-
-sub guess_format {
-    my ($self, $content_ref) = @_;
-    
-    my $tag;
-
-    while ($$content_ref =~ /<(\S+)/sg) {
-        (my $t = $1) =~ tr/a-zA-Z0-9:\-\?!//cd;
-        my $first = substr $t, 0, 1;
-        $tag = $t, last unless $first eq '?' || $first eq '!';
-    }
-
-    croak 'Coult not find the first XML element' unless $tag;
-
-    $tag =~ s/^.*://;
-
-    if ($tag =~ /^(?:rss|rdf)$/i) {
-        return 'RSS';
-    } elsif ($tag =~ /^feed/i) {
-        return 'Atom';
-    }
-
-    return ();
-}
-
-sub _url_stream {
-    my ($self, $stream) = @_;
-    
-    my $ua = LWP::UserAgent->new();
-    $ua->env_proxy;
-    my $req = HTTP::Request->new( GET => $stream );
-    $req->header( 'Accept-Encoding', 'gzip' );
-    my $res = $ua->request($req) or croak "Failed to fetch URI: $stream";
-    
-    if ( $res->code == 410 ) {
-       croak "This feed has been permanently removed";
-    }
-
-    return $res->decoded_content(charset => 'none');
-
-}
-
 
 =head1 AUTHOR
 
@@ -116,9 +55,6 @@ LNATION, C<< <thisusedtobeanemail at gmail.com> >>
 Please report any bugs or feature requests to C<bug-data-feed at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Data-Feed>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 

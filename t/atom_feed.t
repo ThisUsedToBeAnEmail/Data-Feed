@@ -3,9 +3,9 @@ use warnings;
 use Data::Dumper;
 use Data::Feed;
 
-my $feeds = Data::Feed->parse( URI->new('http://use.perl.org/index.atom') );
+my $feed = Data::Feed->new();
+my $feeds = $feed->parse( URI->new('http://feeds.feedburner.com/techcrunch/social?format=xml') );
 
 foreach my $feed (@{ $feeds }) {
-    warn Dumper $feed->title->plain_text;
-    warn Dumper $feed->description->plain_text;
+    warn Dumper $feed->plain_text;
 }

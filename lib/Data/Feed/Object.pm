@@ -2,7 +2,6 @@ package Data::Feed::Object;
 
 use Moo;
 use Carp qw/croak/;
-use Data::Dumper;
 use Data::Feed::Object::Title;
 use Data::Feed::Object::Link;
 use Data::Feed::Object::Description;
