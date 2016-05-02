@@ -19,8 +19,9 @@ has 'stream_type' => (
     lazy    => 1,
     default => sub {
         my $self = shift;
-        return 'url' if $self->stream =~ m{http}xms;
-        return 'file';
+        return 'url' if $self->stream =~ m{^http}xms;
+        return 'string' if $self->stream =~ m{\<\?xml}xms;
+        return 'file' if $self->stream =~ m{xml}xms; 
     }
 );
 
@@ -67,6 +68,7 @@ sub open_file {
     return \$content;
 }
 
+sub open_string { return shift->stream; }
 
 __PACKAGE__->meta->make_immutable;
 
