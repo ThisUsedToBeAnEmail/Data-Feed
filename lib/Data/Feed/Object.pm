@@ -57,6 +57,16 @@ has 'as_xml' => (
     }
 );
 
+sub plain_text {
+    my ( $self ) = shift;
+    
+    my %object;
+    for my $key ( keys $self->args ) {
+        $object{$key} = $self->$key->plain_text; 
+    }
+    return \%object;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR

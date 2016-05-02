@@ -24,7 +24,7 @@ has '+feed' => (
                 link    => $item->{link},
                 description => $item->{description},
                 pubDate => $item->{pubDate},
-                as_xml  => $item
+                as_xml  => $self->content_ref
             );
 
             my $object = Data::Feed::Object->new(args => \%args);

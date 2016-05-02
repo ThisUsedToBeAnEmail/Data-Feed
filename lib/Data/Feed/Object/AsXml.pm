@@ -5,6 +5,10 @@ extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
 
+has '+plain_text' => (
+    default => sub { return 'todo' },
+);
+
 __PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR
