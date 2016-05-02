@@ -27,7 +27,7 @@ has '+feed' => (
                 as_xml => $item->as_xml
             );
         
-            my $object = Data::Feed::Object->new(%args);
+            my $object = Data::Feed::Object->new(args => \%args);
             push @feed, $object;
         }
 

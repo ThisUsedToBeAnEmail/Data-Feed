@@ -1,61 +1,9 @@
-package Data::Feed::Object;
+package Data::Feed::Object::AsXml;
 
 use Moo;
-use Carp qw/croak/;
-use Data::Dumper;
-use Data::Feed::Object::Title;
-use Data::Feed::Object::Link;
-use Data::Feed::Object::Description;
-use Data::Feed::Object::PubDate;
-use Data::Feed::Object::AsXml;
+extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
-
-has 'args' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub { { } }
-);
-
-has 'title' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->args->{'title'});
-    }
-);
-
-has 'link' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->args->{'link'});
-    }
-);
-
-has 'description' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->args->{'description'});
-    }
-);
-
-has 'pubDate' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->args->{'pubDate'});
-    }
-);
-
-has 'as_xml' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->args->{'as_xml'});
-    }
-);
 
 __PACKAGE__->meta->make_immutable;
 

@@ -1,61 +1,37 @@
-package Data::Feed::Object;
+package Data::Feed::Object::Base;
 
 use Moo;
-use Carp qw/croak/;
-use Data::Dumper;
-use Data::Feed::Object::Title;
-use Data::Feed::Object::Link;
-use Data::Feed::Object::Description;
-use Data::Feed::Object::PubDate;
-use Data::Feed::Object::AsXml;
+use Data::Feed::Object;
 
 our $VERSION = '0.01';
 
-has 'args' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub { { } }
+has 'raw' => (
+    is      => 'rw',
+    lazy    => 1,
+    default => q{},
 );
 
-has 'title' => (
-    is => 'ro',
-    lazy => 1,
+has 'plain_text' => (
+    is      => 'rw',
+    lazy    => 1,
     default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->args->{'title'});
-    }
+        return shift->raw;
+    },
 );
 
-has 'link' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->args->{'link'});
-    }
+has 'html' => (
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { 
+        return shift->raw;
+    },
 );
 
-has 'description' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->args->{'description'});
-    }
-);
-
-has 'pubDate' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->args->{'pubDate'});
-    }
-);
-
-has 'as_xml' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->args->{'as_xml'});
-    }
-);
+sub parse {
+    my ($self, $content_ref) = shift;
+    
+    return $self->feed;
+}
 
 __PACKAGE__->meta->make_immutable;
 
