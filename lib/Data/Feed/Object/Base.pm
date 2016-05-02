@@ -2,7 +2,8 @@ package Data::Feed::Object::Base;
 
 use Moo;
 use Data::Feed::Object;
-
+use HTML::Strip;
+use Encode qw(encode_utf8);
 our $VERSION = '0.01';
 
 has 'raw' => (
@@ -15,7 +16,9 @@ has 'plain_text' => (
     is      => 'rw',
     lazy    => 1,
     default => sub {
-        return shift->raw;
+        my $hs = HTML::Strip->new();
+        my $string = $hs->parse(shift->raw);
+        return encode_utf8($string);
     },
 );
 

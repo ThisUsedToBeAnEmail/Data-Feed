@@ -6,6 +6,6 @@ use Data::Feed;
 my $feeds = Data::Feed->parse( URI->new('http://use.perl.org/index.atom') );
 
 foreach my $feed (@{ $feeds }) {
-    warn Dumper $feed->title->raw;
-    warn Dumper $feed->description->raw;
+    warn Dumper $feed->title->plain_text;
+    warn Dumper $feed->description->plain_text;
 }
