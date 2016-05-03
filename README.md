@@ -6,72 +6,55 @@ Data::Feed
 
 Version 0.5
 
-# SYNOPSIS
+# SYNOPSIS GOALS
 
     use Data::Feed;
 
-    my $data_feed = Data::Feed->new();
+    my $feed = Data::Feed->new();
     my $articles = $feed->parse( '***' );
 
-    foreach my $art ( @{ $articles } ) {
+    # to-do
+    $feed->count;
+    $feed->search(article name);
+    $feed->join( '***' );
+    $feed->push( %hash ); 
+    $feed->delete(1st to 5th)
 
-        # all fields in plain text 
-        $art->plain_text;
+    print $feed->as_raw;
+    print $feed->as_html;
+    print $feed->as_xml;
+    print $feed->as_plain;
+    print $feed->as_meta;
 
-        # all fields wrapped in basic html
-        $art->html_text;
+    foreach my $art ( @{ $feed } ) {
 
-        # each individual fields have the same methods
-        $art->title->raw;
-        $art->description->plain_text;
-        $art->link->html_text;
+        $feed->as_raw;
+        $feed->as_plain;
+        $feed->as_xml;
+        $feed->as_html;
+        $feed->as_meta;
+
+        $feed->as_hash_raw;
+        $feed->as_hash_plain;
+        $feed->as_hash_xml;
+        $feed->as_hash_html;
+        $feed->as_hash_meta;
+
+        $art->edit( %hash );
+        $art->title->edit( );
+
+        # each individual fields have the same methods missing some i know!!! :)
+        $feed->title->raw;
+        $feed->description->plain;
+        $feed->link->html;
+        $feed->pub_date->meta;
+        $feed->as_xml->xml;
+
     }
 
 # DESCRIPTION
 
 Data::Feed is a frontend for feeds. It will attempt to guess what type of feed you are passing in, from this it will generate the appropriate feed object.
-
-# STRUCTURE
-
-There are two important parts to Data::Feed the first..
-
-## STREAM
-
-Opening the data, you can pass this module a stream in the following formats.
-
-- URI
-
-        Data::Feed->parse( 'http://example.com/feed.xml' );
-
-- File
-
-        Data::Feed->parse( 'path/to/feed.xml' );
-
-- RAW XML
-
-        Data::Feed->parse( \qq{<?xml version="1.0"><feed> .... </feed>} );
-
-    Secondly we have the...
-
-## PARSER
-
-Parsing the XML into some clean Moo Classes, currently this module only supports RSS and ATOM 
-but it should be relatively easy to expand.
-
-The following objects get set...
-
-- title
-- description
-- pub\_date
-- link
-- as\_xml
-
-# Methods
-
-## parse 
-
-Accepts a stream, opens it, guesses from the content which parser to use.
-The parser loops through the stream building an arrayref of field objects.
 
 
 
@@ -155,26 +138,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 96:
-
-    '=item' outside of any '=over'
-
-- Around line 112:
-
-    You forgot a '=back' before '=head2'
-
-    You forgot a '=back' before '=head2'
-
-- Around line 119:
-
-    '=item' outside of any '=over'
-
-- Around line 131:
-
-    You forgot a '=back' before '=head1'
-
-    You forgot a '=back' before '=head1'
-
-- Around line 140:
+- Around line 115:
 
     You forgot a '=back' before '=head1'
