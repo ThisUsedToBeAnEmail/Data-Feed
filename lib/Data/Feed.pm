@@ -79,16 +79,24 @@ Version 0.5
     use Data::Feed;
 
     my $feed = Data::Feed->new();
-    my $articles = $feed->parse( '***' );
+    $feed->parse( '***' );
+
+    $feed->all;
+    $feed->count;
+    $feed->delete();
+    $feed->get();
+
+    foreach my $entry ( $feed->all ) {
+        $entry->plain_text;
+        $entry->title->raw;
+        $entry->title->plain_text;
+    }
 
     # a lot of to-do's
-    $feed->count;
-    $feed->all;
     $feed->return_range();
     $feed->search(article name);
     $feed->join( '***' );
     $feed->push( %hash ); 
-    $feed->delete();
 
     print $feed->as_raw;
     print $feed->as_html;
@@ -96,35 +104,73 @@ Version 0.5
     print $feed->as_plain;
     print $feed->as_meta;
 
-    foreach my $art ( $feed->all ) {
+    foreach my $entry ( $feed->all ) {
 
-        $art->as_raw;
-        $art->as_plain;
-        $art->as_xml;
-        $art->as_html;
-        $art->as_meta;
+        $entry->as_raw;
+        $entry->as_plain;
+        $entry->as_xml;
+        $entry->as_html;
+        $entry->as_meta;
 
-        $art->as_hash_raw;
-        $art->as_hash_plain;
-        $art->as_hash_xml;
-        $art->as_hash_html;
-        $art->as_hash_meta;
+        $entry->as_hash_raw;
+        $entry->as_hash_plain;
+        $entry->as_hash_xml;
+        $entry->as_hash_html;
+        $entry->as_hash_meta;
 
-        $art->edit( %hash );
-        $art->title->edit( );
+        $entry->edit( %hash );
+        $entry->title->edit( );
 
         # each individual fields have the same methods missing some i know!!! :)
-        $art->title->raw;
-        $art->description->plain;
-        $art->link->html;
-        $art->pub_date->meta;
-        $art->as_xml->xml;
+        $entry->title->as_raw;
+        $entry->description->as_plain;
+        $entry->link->as_html;
+        $entry->pub_date->as_meta;
+        $entry->as_xml->as_xml;
 
     }
 
 =head1 DESCRIPTION
 
 Data::Feed is a frontend for feeds. It will attempt to guess what type of feed you are passing in, from this it will generate the appropriate feed object.
+
+=over
+
+=head1 Methods
+
+=head2 parse
+
+Populates the feed Attribute, this is an Array of Data::Feed::Object 's
+
+You can pass this module a stream in the following formats
+
+=item URI
+
+    $feed->parse( 'http://examples.com/feed.xml' );
+
+=item File
+
+    $feed->parse( 'path/to/feed.xml' );
+
+=item Raw XML
+
+    $feed->parse( 'qq{<?xml version="1.0"><feed> .... </feed>} );
+
+=head2 all
+
+returns all elements in feed
+
+=head2 count
+
+returns the count of the current data feed
+
+=head2 get
+
+accepts an integer and returns an element of the feed by its Array index
+
+=head2 delete
+
+accepts an integer and deletes the relevant elemant based on its Array index
 
 =over
 

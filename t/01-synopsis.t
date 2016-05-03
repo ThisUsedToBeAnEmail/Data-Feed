@@ -13,7 +13,6 @@ warn Dumper $feed->count;
 my $article = $feed->get(2);
 warn Dumper $article->title->plain_text;
 
-
 foreach my $item ( $feed->all ) {
     warn Dumper $item->title->plain_text;
 }
