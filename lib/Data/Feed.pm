@@ -1,9 +1,10 @@
 package Data::Feed;
 
-use Moo;
+use Mouse;
 use Carp qw(croak);
 use Data::Feed::Parser;
 use Data::Feed::Stream;
+use Data::Feed::Object;
 use Data::Dumper;
 use 5.006;
 
@@ -31,19 +32,31 @@ has 'parser' => (
     }
 );
 
+has 'feed' => (
+    is  =>  'rw',
+    isa => 'ArrayRef[Data::Feed::Object]',
+    default => sub { [ ] },
+    traits  => ['Array'],
+    handles => {
+        all     => 'elements',
+        count   => 'count',
+        get     => 'get',
+    }
+);
+
 sub parse {
     my ($self, $stream) = @_;
-
-    $stream ||= $self->stream;
-
-    $self->stream($stream);
 
     if (!$stream) {
         croak "No stream was provided to parse().";
     }
+    
+    $self->stream($stream);
    
     my $parser = $self->parser->parse;
-    return $parser->parse;
+    $self->feed($parser->parse);
+
+    return 1;
 }
 
 __PACKAGE__->meta->make_immutable;

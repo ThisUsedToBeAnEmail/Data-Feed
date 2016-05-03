@@ -30,12 +30,6 @@ has 'html' => (
     },
 );
 
-sub parse {
-    my ($self, $content_ref) = shift;
-    
-    return $self->feed;
-}
-
 __PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR
