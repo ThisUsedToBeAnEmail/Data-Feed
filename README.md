@@ -13,12 +13,14 @@ Version 0.5
     my $feed = Data::Feed->new();
     my $articles = $feed->parse( '***' );
 
-    # to-do
+    # a lot of to-do's
     $feed->count;
+    $feed->all;
+    $feed->return_range();
     $feed->search(article name);
     $feed->join( '***' );
     $feed->push( %hash ); 
-    $feed->delete(1st to 5th)
+    $feed->delete();
 
     print $feed->as_raw;
     print $feed->as_html;
@@ -26,29 +28,29 @@ Version 0.5
     print $feed->as_plain;
     print $feed->as_meta;
 
-    foreach my $art ( @{ $feed } ) {
+    foreach my $art ( $feed->all ) {
 
-        $feed->as_raw;
-        $feed->as_plain;
-        $feed->as_xml;
-        $feed->as_html;
-        $feed->as_meta;
+        $art->as_raw;
+        $art->as_plain;
+        $art->as_xml;
+        $art->as_html;
+        $art->as_meta;
 
-        $feed->as_hash_raw;
-        $feed->as_hash_plain;
-        $feed->as_hash_xml;
-        $feed->as_hash_html;
-        $feed->as_hash_meta;
+        $art->as_hash_raw;
+        $art->as_hash_plain;
+        $art->as_hash_xml;
+        $art->as_hash_html;
+        $art->as_hash_meta;
 
         $art->edit( %hash );
         $art->title->edit( );
 
         # each individual fields have the same methods missing some i know!!! :)
-        $feed->title->raw;
-        $feed->description->plain;
-        $feed->link->html;
-        $feed->pub_date->meta;
-        $feed->as_xml->xml;
+        $art->title->raw;
+        $art->description->plain;
+        $art->link->html;
+        $art->pub_date->meta;
+        $art->as_xml->xml;
 
     }
 
@@ -138,6 +140,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 115:
+- Around line 117:
 
     You forgot a '=back' before '=head1'
