@@ -41,6 +41,7 @@ has 'feed' => (
         all     => 'elements',
         count   => 'count',
         get     => 'get',
+        delete  => 'delete',
     }
 );
 
