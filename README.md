@@ -15,20 +15,25 @@ Version 0.5
 
     $feed->all;
     $feed->count;
-    $feed->delete();
-    $feed->get();
+    $feed->delete(Index1, Index2..);
+    $feed->get(Index1, Index2..);
 
-    foreach my $entry ( $feed->all ) {
-        $entry->plain_text;
+    foreach my $object ( $feed->all ) {
+        $object->render('text'); # text, html, xml..
+        $object->hash('text'); # text, html, xml...
+        $object->fields('title', 'description'); # returns title and description object
+        $object->edit(title => 'WoW', description => 'something amazing'); # sets
+        
+        # missing fields
+        $object->title;
+        $object->link;
+        $object->description;
+        $object->pub_date;
+        
+        # missing lots
         $entry->title->raw;
-        $entry->title->plain_text;
+        $entry->title->as_text;
     }
-
-# TODOs can be found in my broken tests
-
-    02-feed.t
-    03-object.t
-    04-field.t
 
 # DESCRIPTION
 
@@ -150,18 +155,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 107:
+- Around line 112:
 
     You forgot a '=back' before '=head1'
 
-- Around line 115:
+- Around line 120:
 
     '=item' outside of any '=over'
 
-- Around line 127:
+- Around line 132:
 
     You forgot a '=back' before '=head2'
 
-- Around line 145:
+- Around line 150:
 
     You forgot a '=back' before '=head1'
