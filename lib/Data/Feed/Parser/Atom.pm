@@ -23,11 +23,11 @@ has '+feed' => (
                 title => $item->title,   
                 link => $item->link->href,
                 description => $item->summary,
-                pubDate => $item->updated,
+                pub_date => $item->updated,
                 as_xml => $item->as_xml
             );
         
-            my $object = Data::Feed::Object->new(args => \%args);
+            my $object = Data::Feed::Object->new(object => \%args);
             push @feed, $object;
         }
 

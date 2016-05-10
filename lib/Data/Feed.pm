@@ -83,20 +83,25 @@ Version 0.5
 
     $feed->all;
     $feed->count;
-    $feed->delete();
-    $feed->get();
+    $feed->delete(Index1, Index2..);
+    $feed->get(Index1, Index2..);
 
-    foreach my $entry ( $feed->all ) {
-        $entry->plain_text;
+    foreach my $object ( $feed->all ) {
+        $object->render('text'); # text, html, xml..
+        $object->hash('text'); # text, html, xml...
+        $object->fields('title', 'description'); # returns title and description object
+        $object->edit(title => 'WoW', description => 'something amazing'); # sets
+        
+        # missing fields
+        $object->title;
+        $object->link;
+        $object->description;
+        $object->pub_date;
+        
+        # missing lots
         $entry->title->raw;
-        $entry->title->plain_text;
+        $entry->title->as_text;
     }
-
-=head1 TODOs can be found in my broken tests
-
-    02-feed.t
-    03-object.t
-    04-field.t
 
 =head1 DESCRIPTION
 

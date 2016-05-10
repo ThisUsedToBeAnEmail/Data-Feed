@@ -1,6 +1,6 @@
 package Data::Feed::Object;
 
-use Moo;
+use Moose;
 use Carp qw/croak/;
 use Data::Feed::Object::Title;
 use Data::Feed::Object::Link;
@@ -10,17 +10,23 @@ use Data::Feed::Object::AsXml;
 
 our $VERSION = '0.01';
 
-has 'args' => (
+has 'object' => (
+    traits => ['Hash'],
     is  => 'ro',
     lazy => 1,
-    default => sub { { } }
+    default => sub { { } },
+    handles => {
+       keys   => 'keys',
+       fields => 'get',
+       edit   => 'set',
+    },
 );
 
 has 'title' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->args->{'title'});
+        return Data::Feed::Object::Title->new(raw => shift->object->{'title'});
     }
 );
 
@@ -28,7 +34,7 @@ has 'link' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->args->{'link'});
+        return Data::Feed::Object::Link->new(raw => shift->object->{'link'});
     }
 );
 
@@ -36,15 +42,15 @@ has 'description' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->args->{'description'});
+        return Data::Feed::Object::Description->new(raw => shift->object->{'description'});
     }
 );
 
-has 'pubDate' => (
+has 'pub_date' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->args->{'pubDate'});
+        return Data::Feed::Object::PubDate->new(raw => shift->object->{'pubDate'});
     }
 );
 
@@ -52,16 +58,34 @@ has 'as_xml' => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->args->{'as_xml'});
+        return Data::Feed::Object::AsXml->new(raw => shift->object->{'as_xml'});
     }
 );
 
-sub plain_text {
-    my ( $self ) = shift;
+sub render {
+    my ( $self, $format ) = @_;
+
+    $format ||= 'text';
+    my @render;
+    foreach my $key ( $self->keys ) {
+        my $field = $self->$key;
+        my $type = 'as_' . $format;
+        push @render, $field->$type;
+    }
     
+    return join "\n", @render;
+}
+
+sub hash {
+    my ( $self, $format ) = @_;
+   
+    $format ||= 'text';
+
     my %object;
-    for my $key ( keys $self->args ) {
-        $object{$key} = $self->$key->plain_text; 
+    for my $key ( keys $self->object ) {
+        my $field = $self->$key;
+        my $type = 'as_' . $format;
+        $object{$key} = $self->$key->$type; 
     }
     return \%object;
 }

@@ -12,7 +12,7 @@ has 'raw' => (
     default => q{},
 );
 
-has 'plain_text' => (
+has 'as_text' => (
     is      => 'rw',
     lazy    => 1,
     default => sub {

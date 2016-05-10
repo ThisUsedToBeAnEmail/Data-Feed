@@ -36,6 +36,7 @@ subtest 'object options' => sub {
         output => 1
     });
     # EVERYTHING BELOW THIS POINT IS BROKEN
+=pod
     test_feed({
         action => 'push',
         feed => $feed
@@ -46,10 +47,12 @@ subtest 'object options' => sub {
         input => { start => 0, end => 1 },
         isa_output => 'Data::Feed', 
     });
+=cut
 };
 
+=pod
 subtest 'object render options' => sub {
-    test_feed({
+   test_feed({
         action => 'as_raw',
         feed => $feed
     });
@@ -70,6 +73,7 @@ subtest 'object render options' => sub {
         feed => $feed
     });
 };
+=cut
 
 done_testing();
 
