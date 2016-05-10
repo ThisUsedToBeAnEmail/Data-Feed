@@ -52,8 +52,6 @@ sub open_url {
     }
 
     my $content = $res->decoded_content(charset => 'none');
-    use Data::Dumper;
-    warn Dumper $content;
 
     return \$content;
 }
@@ -67,8 +65,6 @@ sub open_file {
 
     my $content = do { local $/; <$fh> };
     close $fh;
-
-    warn Dumper $content;
 
     return \$content;
 }

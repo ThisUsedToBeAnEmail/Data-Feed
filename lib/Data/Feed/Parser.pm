@@ -43,7 +43,6 @@ has 'parser_type' => (
         my $self = shift;
         
         my $tag = $self->parse_tag;
-        warn Dumper $tag;
         return 'RSS' if $tag =~ /^(?:rss|rdf)$/i;
         return 'Atom' if $tag =~ /^feed/i;
         return croak "Could not find a parser";
@@ -56,7 +55,6 @@ has 'parse' => (
     default => sub {
         my $self = shift;
         my $type = $self->parser_type;
-        warn Dumper $type;
         my $class = "Data::Feed::Parser::" . $type;
         return $class->new(content_ref => $self->stream);
     }

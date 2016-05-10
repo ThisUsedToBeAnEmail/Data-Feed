@@ -35,8 +35,8 @@ has 'parser' => (
 has 'feed' => (
     is  =>  'rw',
     isa => 'ArrayRef[Data::Feed::Object]',
-    default => sub { [ ] },
     traits  => ['Array'],
+    default => sub { [ ] },
     handles => {
         all     => 'elements',
         count   => 'count',
@@ -92,43 +92,11 @@ Version 0.5
         $entry->title->plain_text;
     }
 
-    # a lot of to-do's
-    $feed->return_range();
-    $feed->search(article name);
-    $feed->join( '***' );
-    $feed->push( %hash ); 
+=head1 TODOs can be found in my broken tests
 
-    print $feed->as_raw;
-    print $feed->as_html;
-    print $feed->as_xml;
-    print $feed->as_plain;
-    print $feed->as_meta;
-
-    foreach my $entry ( $feed->all ) {
-
-        $entry->as_raw;
-        $entry->as_plain;
-        $entry->as_xml;
-        $entry->as_html;
-        $entry->as_meta;
-
-        $entry->as_hash_raw;
-        $entry->as_hash_plain;
-        $entry->as_hash_xml;
-        $entry->as_hash_html;
-        $entry->as_hash_meta;
-
-        $entry->edit( %hash );
-        $entry->title->edit( );
-
-        # each individual fields have the same methods missing some i know!!! :)
-        $entry->title->as_raw;
-        $entry->description->as_plain;
-        $entry->link->as_html;
-        $entry->pub_date->as_meta;
-        $entry->as_xml->as_xml;
-
-    }
+    02-feed.t
+    03-object.t
+    04-field.t
 
 =head1 DESCRIPTION
 
@@ -176,7 +144,6 @@ accepts an integer and deletes the relevant elemant based on its Array index
 
 =head1 AUTHOR
 
-LNATION, C<< <thisusedtobeanemail at gmail.com> >>
 
 =head1 BUGS
 
@@ -187,8 +154,6 @@ automatically be notified of progress on your bug as I make changes.
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
-
-    perldoc Data::Feed
 
 
 You can also look for information at:
