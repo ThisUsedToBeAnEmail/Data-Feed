@@ -66,13 +66,13 @@ sub render {
     my ( $self, $format ) = @_;
 
     $format ||= 'text';
+    
     my @render;
     foreach my $key ( $self->keys ) {
         my $field = $self->$key;
         my $type = 'as_' . $format;
         push @render, $field->$type;
     }
-    
     return join "\n", @render;
 }
 

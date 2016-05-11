@@ -18,6 +18,9 @@ Version 0.5
     $feed->delete(Index1, Index2..);
     $feed->get(Index1, Index2..);
 
+    $feed->write( 'path/to/empty.xml' );
+    $feed->render('text'); # TODO make Object an array of hash refs
+
     foreach my $object ( $feed->all ) {
         $object->render('text'); # text, html, xml..
         $object->hash('text'); # text, html, xml...
@@ -155,18 +158,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Hey! **The above document had some coding errors, which are explained below:**
 
-- Around line 112:
+- Around line 135:
 
     You forgot a '=back' before '=head1'
 
-- Around line 120:
+- Around line 143:
 
     '=item' outside of any '=over'
 
-- Around line 132:
+- Around line 155:
 
     You forgot a '=back' before '=head2'
 
-- Around line 150:
+- Around line 173:
 
     You forgot a '=back' before '=head1'

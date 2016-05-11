@@ -1,6 +1,6 @@
 package Data::Feed;
 
-use Mouse;
+use Moose;
 use Carp qw(croak);
 use Data::Feed::Parser;
 use Data::Feed::Stream;
@@ -17,24 +17,17 @@ has 'stream' => (
 );
 
 has 'fetch_stream' => (
-    is   => 'ro',
+    is   => 'rw',
     lazy => 1,
     default => sub { 
-        return Data::Feed::Stream->new(stream => shift->stream) 
-    }
-);
-
-has 'parser' => (
-    is   => 'ro',
-    lazy => 1,
-    default => sub { 
-        return Data::Feed::Parser->new(stream => shift->fetch_stream->open_stream) 
+        return Data::Feed::Stream->new(stream => shift->stream); 
     }
 );
 
 has 'feed' => (
     is  =>  'rw',
     isa => 'ArrayRef[Data::Feed::Object]',
+    lazy => 1,
     traits  => ['Array'],
     default => sub { [ ] },
     handles => {
@@ -53,11 +46,38 @@ sub parse {
     }
     
     $self->stream($stream);
-   
-    my $parser = $self->parser->parse;
+
+    my $parser = Data::Feed::Parser->new(stream => $self->fetch_stream->open_stream)->parse;
     $self->feed($parser->parse);
 
     return 1;
+}
+
+sub write {
+    my ($self, $stream) = @_;
+
+    if (!$stream || $stream =~ m{^http}) {
+        croak "No valid stream was provided to write"; 
+    }
+    
+    $self->fetch_stream->write_file($stream, $self->render);
+    
+    return 1;
+}
+
+sub render {
+    my ( $self, $format ) = @_;
+
+    $format ||= 'text';
+
+    my @render;
+    foreach my $object ( $self->all ) {
+        push @render, $object->render($format);
+    }
+
+    my $output = join "\n/", @render;
+
+    return $output;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -85,6 +105,9 @@ Version 0.5
     $feed->count;
     $feed->delete(Index1, Index2..);
     $feed->get(Index1, Index2..);
+
+    $feed->write( 'path/to/empty.xml' );
+    $feed->render('text'); # TODO make Object an array of hash refs
 
     foreach my $object ( $feed->all ) {
         $object->render('text'); # text, html, xml..

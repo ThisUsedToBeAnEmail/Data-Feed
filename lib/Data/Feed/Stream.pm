@@ -1,22 +1,25 @@
 package Data::Feed::Stream;
 
-use Moo;
+use Moose;
 use Carp qw/croak/;
 use Data::Dumper;
+use Path::Class;
 use LWP::UserAgent;
 use HTTP::Request;
+use autodie;
 
 our $VERSION = '0.01';
 
 has 'stream' => (
-    is  => 'ro',
+    is  => 'rw',
+    isa => 'Str',
     lazy => 1,
     default => q{}
 );
 
 has 'stream_type' => (
     is      => 'ro',
-    lazy    => 1,
+    isa     => 'Str',
     default => sub {
         my $self = shift;
         return 'url' if $self->stream =~ m{^http}xms;
@@ -25,15 +28,11 @@ has 'stream_type' => (
     }
 );
 
-has 'open_stream' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $type = 'open_' . $self->stream_type;
-        return $self->$type;
-    }
-);
+sub open_stream {
+    my $self = shift;
+    my $type = 'open_' . $self->stream_type;
+    return $self->$type;
+}
 
 sub open_url {
     my ($self) = shift;
@@ -70,6 +69,14 @@ sub open_file {
 }
 
 sub open_string { return shift->stream; }
+
+sub write_file {
+    my ($self, $stream, $feed) = @_;
+
+    open FILE, ">", $stream  or croak "could not open file: $stream";
+    print FILE $feed;
+    close FILE;
+}
 
 __PACKAGE__->meta->make_immutable;
 

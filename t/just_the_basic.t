@@ -1,11 +1,17 @@
 use strict;
 use warnings;
+use Test::More;
 use Data::Dumper;
-use Data::Feed;
+
+BEGIN {
+    use_ok("Data::Feed");
+}
 
 my $feed = Data::Feed->new();
-my $feeds = $feed->parse( URI->new('http://feeds.feedburner.com/techcrunch/social?format=xml') );
+$feed->parse( 't/data/rss20.xml' );
 
-foreach my $f ( @{ $feeds }) {
-    warn Dumper $f->title->plain_text;
-}
+warn Dumper $feed->count;
+
+$feed->write( 't/data/empty.xml' );
+
+
