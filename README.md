@@ -6,7 +6,7 @@ Data::Feed
 
 Version 0.5
 
-# SYNOPSIS GOALS
+# SYNOPSIS 
 
     use Data::Feed;
 
@@ -28,21 +28,19 @@ Version 0.5
         $object->edit(title => 'WoW', description => 'something amazing'); # sets
         
         # missing fields
-        $object->title;
-        $object->link;
-        $object->description;
-        $object->pub_date;
+        $object->title->raw;
+        $object->link->raw;
+        $object->description->raw;
+        $object->image->raw;
+        $object->pub_date->raw;
         
         # missing lots
-        $entry->title->raw;
         $entry->title->as_text;
     }
 
 # DESCRIPTION
 
-Data::Feed is a frontend for feeds. It will attempt to guess what type of feed you are passing in, from this it will generate the appropriate feed object.
-
-
+Data::Feed is a frontend for building dynamic data feeds.
 
 # Methods
 
@@ -50,23 +48,22 @@ Data::Feed is a frontend for feeds. It will attempt to guess what type of feed y
 
 Populates the feed Attribute, this is an Array of Data::Feed::Object 's
 
-You can pass this module a stream in the following formats
+You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Meta Tags (twitter, opengraph);
 
 - URI
-
-        $feed->parse( 'http://examples.com/feed.xml' );
-
+    # any rss/atom feed or a web page that contains og or twitter markup
+    $feed->parse( 'http://examples.com/feed.xml' );
 - File
 
         $feed->parse( 'path/to/feed.xml' );
 
-- Raw XML
+- Raw 
 
         $feed->parse( 'qq{<?xml version="1.0"><feed> .... </feed>} );
 
 ## all
 
-returns all elements in feed
+returns all elements in the feed
 
 ## count
 
@@ -80,7 +77,14 @@ accepts an integer and returns an element of the feed by its Array index
 
 accepts an integer and deletes the relevant elemant based on its Array index
 
+## write
 
+accecpts a local file path and writes the current feed object 
+\*\*not usefull untill i fix render
+
+## render
+
+## hash
 
 # AUTHOR
 
@@ -153,23 +157,3 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 135:
-
-    You forgot a '=back' before '=head1'
-
-- Around line 143:
-
-    '=item' outside of any '=over'
-
-- Around line 155:
-
-    You forgot a '=back' before '=head2'
-
-- Around line 173:
-
-    You forgot a '=back' before '=head1'

@@ -62,10 +62,13 @@ has 'site_name' => (
 
 sub parse {
     my ($self, $html) = @_;
-   
+
+    # can defiently do something better here but what i'm unsure other than use a module 
+    # could also be one regex but splitting makes it easier to understand
+    $$html =~ s/\>/\>\n/g;
+    $$html =~ s/}/}\n/g;
     # lets do it a dummy way then utilise
     my @lines = split /\n/, $$html;
-    
     my %fields;   
     foreach my $line ( @lines ) {
         my ($type, $field, $content);
@@ -77,8 +80,11 @@ sub parse {
             # $2 - value either twitter:field, og:field or content value
             my $cont = $2;
 
+            next if $cont =~ m{sailthru};
+
             if ($att =~ /name|property/) { 
                 ($type, $field) = split(/:/, $cont);
+                next if !$field;
                 $field =~ s/"|'//g;
             } elsif ( $att =~ /content/) {
                 $content = $cont;
@@ -86,9 +92,17 @@ sub parse {
             };
         }
 
-        # little bit of dirt, but it makes things easier for me
+        next unless $field and $content;
+        # little bit of dirt, but it makes things easier for me should truncate i think
         $field = 'link' if $field eq 'url';
-        $fields{$field} = $content;
+        if ($fields{$field}) {
+            next unless $type =~ m{og|twitter};
+            # some more dirt - blame PHP developers ;)
+            my $more = length $content > length $fields{$field};
+            $fields{$field} = $content if $more;
+        } else {
+            $fields{$field} = $content;
+        }
     } 
    
     $self->tags(\%fields);   

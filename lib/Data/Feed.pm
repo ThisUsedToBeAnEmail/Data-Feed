@@ -21,7 +21,7 @@ has 'feed' => (
         count   => 'count',
         get     => 'get',
         delete  => 'delete',
-        push    => 'push',
+        add     => 'unshift',
     }
 );
 
@@ -37,7 +37,7 @@ sub parse {
     )->parse;
 
     if ($self->count > 1) {
-      $self->push(@{ $parser->parse });
+      $self->add(@{ $parser->parse });
     } else {
       $self->feed($parser->parse);
     }
@@ -86,7 +86,7 @@ Data::Feed
 
 Version 0.5
 
-=head1 SYNOPSIS GOALS
+=head1 SYNOPSIS 
 
     use Data::Feed;
 
@@ -120,47 +120,99 @@ Version 0.5
 
 =head1 DESCRIPTION
 
-Data::Feed is a frontend for feeds. It will attempt to guess what type of feed you are passing in, from this it will generate the appropriate feed object.
+Data::Feed is a frontend for building dynamic data feeds.
 
 =over
 
+=back
+
 =head1 Methods
+
+=over
+
+=back
 
 =head2 parse
 
 Populates the feed Attribute, this is an Array of Data::Feed::Object 's
 
-You can pass this module a stream in the following formats
+You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Meta Tags (twitter, opengraph);
+
+=over
 
 =item URI
-
+    # any rss/atom feed or a web page that contains og or twitter markup
     $feed->parse( 'http://examples.com/feed.xml' );
+
+=cut
 
 =item File
 
     $feed->parse( 'path/to/feed.xml' );
 
+=cut
+
 =item Raw 
 
     $feed->parse( 'qq{<?xml version="1.0"><feed> .... </feed>} );
 
+=cut 
+
+=back
+
 =head2 all
 
-returns all elements in feed
+returns all elements in the feed
+
+=over
+
+=back
 
 =head2 count
 
 returns the count of the current data feed
 
+=over
+
+=back
+
 =head2 get
 
 accepts an integer and returns an element of the feed by its Array index
+
+=over
+
+=back
 
 =head2 delete
 
 accepts an integer and deletes the relevant elemant based on its Array index
 
 =over
+
+=back
+
+=head2 write
+
+accecpts a local file path and writes the current feed object 
+**not usefull untill i fix render
+
+=over
+
+=back
+
+=head2 render
+
+=over
+
+=back
+
+=head2 hash
+
+=over
+
+=back
+
 
 =head1 AUTHOR
 
@@ -197,9 +249,7 @@ L<http://search.cpan.org/dist/Data-Feed/>
 
 =back
 
-
 =head1 ACKNOWLEDGEMENTS
-
 
 =head1 LICENSE AND COPYRIGHT
 

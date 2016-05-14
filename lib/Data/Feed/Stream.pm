@@ -38,9 +38,9 @@ sub open_url {
     my ($self) = shift;
 
     my $stream = $self->stream;
-    my $ua = LWP::UserAgent->new();
+    my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 1 });
     $ua->env_proxy;
-
+    $ua->agent("Mozilla/8.0");
     my $req = HTTP::Request->new( GET => $stream );
     $req->header( 'Accept-Encoding', 'gzip' );
 

@@ -52,7 +52,7 @@ sub test_values {
     
     my $feed = $args->{feed};
     my $action = $args->{action};
-    my $object = $feed->get(2);
+    my $object = $feed->get(0);
     is($object->$action->raw, $args->{output}, "correct output: $action - $args->{output}");
 }
 
