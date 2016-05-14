@@ -71,7 +71,9 @@ sub open_file {
 sub open_string { return shift->stream; }
 
 sub write_file {
-    my ($self, $stream, $feed) = @_;
+    my ($self, $feed) = @_;
+
+    my $stream = $self->stream;
 
     open FILE, ">", $stream  or croak "could not open file: $stream";
     print FILE $feed;

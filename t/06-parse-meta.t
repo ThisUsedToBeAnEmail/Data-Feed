@@ -7,6 +7,7 @@ BEGIN {
 }
 
 my $feed = Data::Feed->new();
+$feed->parse( 't/data/rss20.xml' );
 $feed->parse( 't/data/blog.html' );
 
 subtest 'basic feed options' => sub {
@@ -17,7 +18,7 @@ subtest 'basic feed options' => sub {
     test_feed({
         action => 'count',
         feed => $feed,
-        output => 1,
+        output => 3,
     });
 };
 
@@ -51,10 +52,8 @@ sub test_values {
     
     my $feed = $args->{feed};
     my $action = $args->{action};
-
-    foreach my $object ($feed->all) {
-        is($object->$action->raw, $args->{output}, "correct output: $action - $args->{output}");
-    }    
+    my $object = $feed->get(2);
+    is($object->$action->raw, $args->{output}, "correct output: $action - $args->{output}");
 }
 
 sub test_feed {

@@ -10,20 +10,6 @@ use 5.006;
 
 our $VERSION = '0.01';
 
-has 'stream' => (
-    is   => 'rw',
-    lazy => 1,
-    default => q{},
-);
-
-has 'fetch_stream' => (
-    is   => 'rw',
-    lazy => 1,
-    default => sub { 
-        return Data::Feed::Stream->new(stream => shift->stream); 
-    }
-);
-
 has 'feed' => (
     is  =>  'rw',
     isa => 'ArrayRef[Data::Feed::Object]',
@@ -35,6 +21,7 @@ has 'feed' => (
         count   => 'count',
         get     => 'get',
         delete  => 'delete',
+        push    => 'push',
     }
 );
 
@@ -45,10 +32,15 @@ sub parse {
         croak "No stream was provided to parse().";
     }
     
-    $self->stream($stream);
+    my $parser = Data::Feed::Parser->new(
+        stream => Data::Feed::Stream->new(stream => $stream)->open_stream
+    )->parse;
 
-    my $parser = Data::Feed::Parser->new(stream => $self->fetch_stream->open_stream)->parse;
-    $self->feed($parser->parse);
+    if ($self->count > 1) {
+      $self->push(@{ $parser->parse });
+    } else {
+      $self->feed($parser->parse);
+    }
 
     return 1;
 }
@@ -60,7 +52,7 @@ sub write {
         croak "No valid stream was provided to write"; 
     }
     
-    $self->fetch_stream->write_file($stream, $self->render);
+    Data::Feed::Stream->new(stream => $stream)->write_file($self->render);
     
     return 1;
 }
@@ -72,7 +64,7 @@ sub render {
 
     my @render;
     foreach my $object ( $self->all ) {
-        push @render, $object->render($format);
+        push @render, &$object->render($format);
     }
 
     my $output = join "\n/", @render;
