@@ -5,6 +5,7 @@ use Carp qw/croak/;
 use Data::Dumper;
 use Data::Feed::Parser::RSS;
 use Data::Feed::Parser::Atom;
+use Data::Feed::Parser::Meta;
 
 our $VERSION = '0.01';
 
@@ -45,6 +46,7 @@ has 'parser_type' => (
         my $tag = $self->parse_tag;
         return 'RSS' if $tag =~ /^(?:rss|rdf)$/i;
         return 'Atom' if $tag =~ /^feed/i;
+        return 'Meta' if $tag =~ m{html};
         return croak "Could not find a parser";
     }
 );

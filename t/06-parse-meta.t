@@ -19,25 +19,43 @@ subtest 'basic feed options' => sub {
         feed => $feed,
         output => 1,
     });
-    test_feed({
-        action => 'get',
+};
+
+subtest 'check the values' => sub {
+    test_values({
+        action => 'title',
         feed => $feed,
-        input => 1,
-        isa_object => 'Data::Feed::Object'
+        output => 'You can have any title you wish here',
     });
-    test_feed({
-        action => 'delete',
+    test_values({
+        action => 'description',
         feed => $feed,
-        input => 1,
+        output => 'Description goes here may have to do a little validation',
     });
-    test_feed({
-        action => 'count',
+    test_values({
+        action => 'link',
         feed => $feed,
-        output => 0
+        output => 'www.someurl.com',
+    });
+    test_values({
+        action => 'image',
+        feed => $feed,
+        output => 'www.urltoimage.com/blah.jpg',
     });
 };
 
 done_testing();
+
+sub test_values {
+    my ($args) = @_;
+    
+    my $feed = $args->{feed};
+    my $action = $args->{action};
+
+    foreach my $object ($feed->all) {
+        is($object->$action->raw, $args->{output}, "correct output: $action - $args->{output}");
+    }    
+}
 
 sub test_feed {
     my ($args) = @_;

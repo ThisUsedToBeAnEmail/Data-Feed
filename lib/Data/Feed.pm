@@ -116,13 +116,13 @@ Version 0.5
         $object->edit(title => 'WoW', description => 'something amazing'); # sets
         
         # missing fields
-        $object->title;
-        $object->link;
-        $object->description;
-        $object->pub_date;
+        $object->title->raw;
+        $object->link->raw;
+        $object->description->raw;
+        $object->image->raw;
+        $object->pub_date->raw;
         
         # missing lots
-        $entry->title->raw;
         $entry->title->as_text;
     }
 
@@ -148,7 +148,7 @@ You can pass this module a stream in the following formats
 
     $feed->parse( 'path/to/feed.xml' );
 
-=item Raw XML
+=item Raw 
 
     $feed->parse( 'qq{<?xml version="1.0"><feed> .... </feed>} );
 
@@ -171,7 +171,6 @@ accepts an integer and deletes the relevant elemant based on its Array index
 =over
 
 =head1 AUTHOR
-
 
 =head1 BUGS
 

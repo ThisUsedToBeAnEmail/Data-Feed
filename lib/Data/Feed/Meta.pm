@@ -1,102 +1,97 @@
-package Data::Feed::Object;
+package Data::Feed::Meta;
 
 use Moose;
 use Carp qw/croak/;
-use Data::Feed::Object::Title;
-use Data::Feed::Object::Link;
-use Data::Feed::Object::Description;
-use Data::Feed::Object::Image;
-use Data::Feed::Object::PubDate;
-use Data::Feed::Object::AsXml;
 
 our $VERSION = '0.01';
 
-has 'object' => (
+has 'tags' => (
     traits => ['Hash'],
-    is  => 'ro',
+    is  => 'rw',
     lazy => 1,
     default => sub { { } },
     handles => {
+       all    => 'elements',
        keys   => 'keys',
        fields => 'get',
        edit   => 'set',
     },
 );
 
+has 'card' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { return shift->tags->{'card'} }
+);
+
+has 'site' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { return shift->tags->{'site'} }
+);
+
 has 'title' => (
     is => 'ro',
     lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->object->{'title'});
-    }
-);
-
-has 'link' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->object->{'link'});
-    }
+    default => sub { return shift->tags->{'title'} }
 );
 
 has 'description' => (
     is => 'ro',
     lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->object->{'description'});
-    }
+    default => sub { return shift->tags->{'description'} }
 );
 
 has 'image' => (
     is => 'ro',
     lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Image->new(raw => shift->object->{'image'});
-    }
+    default => sub { return shift->tags->{'image'} }
 );
 
-has 'pub_date' => (
+has 'link' => (
     is => 'ro',
     lazy => 1,
-    default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->object->{'pubDate'});
-    }
+    default => sub { return shift->tags->{'link'} }
 );
 
-has 'as_xml' => (
+has 'site_name' => (
     is => 'ro',
     lazy => 1,
-    default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->object->{'as_xml'});
-    }
+    default => sub { return shift->tags->{'site_name'} }
 );
 
-sub render {
-    my ( $self, $format ) = @_;
-
-    $format ||= 'text';
-    
-    my @render;
-    foreach my $key ( $self->keys ) {
-        my $field = $self->$key;
-        my $type = 'as_' . $format;
-        push @render, $field->$type;
-    }
-    return join "\n", @render;
-}
-
-sub hash {
-    my ( $self, $format ) = @_;
+sub parse {
+    my ($self, $html) = @_;
    
-    $format ||= 'text';
+    # lets do it a dummy way then utilise
+    my @lines = split /\n/, $$html;
+    
+    my %fields;   
+    foreach my $line ( @lines ) {
+        my ($type, $field, $content);
 
-    my %object;
-    for my $key ( keys $self->object ) {
-        my $field = $self->$key;
-        my $type = 'as_' . $format;
-        $object{$key} = $self->$key->$type; 
-    }
-    return \%object;
+        next unless $line =~ m{<meta}xms;
+        while ($line =~ /(?:^|\s+)(\S+)\s*=\s*("[^"]*"|\S*)/g) {
+            # $1 - name, content or property
+            my $att = $1;
+            # $2 - value either twitter:field, og:field or content value
+            my $cont = $2;
+
+            if ($att =~ /name|property/) { 
+                ($type, $field) = split(/:/, $cont);
+                $field =~ s/"|'//g;
+            } elsif ( $att =~ /content/) {
+                $content = $cont;
+                $content =~ s/"|'//g;
+            };
+        }
+
+        # little bit of dirt, but it makes things easier for me
+        $field = 'link' if $field eq 'url';
+        $fields{$field} = $content;
+    } 
+   
+    $self->tags(\%fields);   
 }
 
 __PACKAGE__->meta->make_immutable;

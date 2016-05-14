@@ -1,103 +1,29 @@
-package Data::Feed::Object;
+package Data::Feed::Parser::Meta;
 
 use Moose;
-use Carp qw/croak/;
-use Data::Feed::Object::Title;
-use Data::Feed::Object::Link;
-use Data::Feed::Object::Description;
-use Data::Feed::Object::Image;
-use Data::Feed::Object::PubDate;
-use Data::Feed::Object::AsXml;
+extends 'Data::Feed::Parser::Base';
+use Data::Feed::Meta;
 
 our $VERSION = '0.01';
 
-has 'object' => (
-    traits => ['Hash'],
-    is  => 'ro',
-    lazy => 1,
-    default => sub { { } },
-    handles => {
-       keys   => 'keys',
-       fields => 'get',
-       edit   => 'set',
+has '+parser' => (
+    default => sub {
+        my $self = shift;
+        return Data::Feed::Meta->new();
     },
 );
 
-has 'title' => (
-    is => 'ro',
-    lazy => 1,
+has '+feed' => (
     default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->object->{'title'});
-    }
+        my $self = shift;
+
+        my $parser = $self->parser;
+        $parser->parse( $self->content_ref );
+        my $object = Data::Feed::Object->new(object => $parser->tags);
+
+        return [ $object ];
+   }
 );
-
-has 'link' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->object->{'link'});
-    }
-);
-
-has 'description' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->object->{'description'});
-    }
-);
-
-has 'image' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Image->new(raw => shift->object->{'image'});
-    }
-);
-
-has 'pub_date' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->object->{'pubDate'});
-    }
-);
-
-has 'as_xml' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->object->{'as_xml'});
-    }
-);
-
-sub render {
-    my ( $self, $format ) = @_;
-
-    $format ||= 'text';
-    
-    my @render;
-    foreach my $key ( $self->keys ) {
-        my $field = $self->$key;
-        my $type = 'as_' . $format;
-        push @render, $field->$type;
-    }
-    return join "\n", @render;
-}
-
-sub hash {
-    my ( $self, $format ) = @_;
-   
-    $format ||= 'text';
-
-    my %object;
-    for my $key ( keys $self->object ) {
-        my $field = $self->$key;
-        my $type = 'as_' . $format;
-        $object{$key} = $self->$key->$type; 
-    }
-    return \%object;
-}
 
 __PACKAGE__->meta->make_immutable;
 
