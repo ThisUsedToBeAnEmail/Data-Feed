@@ -51,8 +51,10 @@ Populates the feed Attribute, this is an Array of Data::Feed::Object 's
 You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Meta Tags (twitter, opengraph);
 
 - URI
-    # any rss/atom feed or a web page that contains og or twitter markup
-    $feed->parse( 'http://examples.com/feed.xml' );
+
+        # any rss/atom feed or a web page that contains og or twitter markup
+        $feed->parse( 'http://examples.com/feed.xml' );
+
 - File
 
         $feed->parse( 'path/to/feed.xml' );

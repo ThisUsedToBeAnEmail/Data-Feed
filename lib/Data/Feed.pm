@@ -141,6 +141,7 @@ You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Met
 =over
 
 =item URI
+
     # any rss/atom feed or a web page that contains og or twitter markup
     $feed->parse( 'http://examples.com/feed.xml' );
 
