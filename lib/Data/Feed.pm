@@ -28,16 +28,18 @@ has 'feed' => (
 sub parse {
     my ($self, $stream) = @_;
 
+    use Data::Dumper;
     if (!$stream) {
         croak "No stream was provided to parse().";
     }
-    
     my $parser = Data::Feed::Parser->new(
         stream => Data::Feed::Stream->new(stream => $stream)->open_stream
     )->parse;
 
-    if ($self->count > 1) {
-      $self->add(@{ $parser->parse });
+    warn Dumper $self->count;
+    if ($self->count >= 1) {
+        warn Dumper 'yooo';
+        $self->add(@{ $parser->parse });
     } else {
       $self->feed($parser->parse);
     }

@@ -17,7 +17,6 @@ has '+feed' => (
     default => sub {
         my $self = shift;
         my $parser = $self->parser;
-        use Data::Dumper;
         $parser->parse( $self->content_ref );
         my $object = Data::Feed::Object->new(object => $parser->tags);
 

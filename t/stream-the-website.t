@@ -1,8 +1,13 @@
 #!/use/bin/perl
+use strict;
+use warnings;
+use Test::More;
 
 use URI;
 use Web::Scraper;
 use Encode;
+use Data::Feed;
+
 use Data::Dumper;
 
 my $uri = "https://www.techcrunch.com";
@@ -18,7 +23,15 @@ foreach my $author (@{ $res->{links} }){
     $seen{$link}++;
 }
 
-warn Dumper \%seen;
-warn Dumper scalar keys %seen;
+my $feed = Data::Feed->new();
+my $count = 0;
+for my $l  (keys %seen) {
+    $count++;
+    $feed->parse($l);
 
-1;
+    last if $count > 10
+};
+
+foreach my $ff ( $feed->all ) {
+    warn Dumper $ff->title->raw;
+}
