@@ -3,6 +3,7 @@ package Data::Feed::Parser::Meta;
 use Moose;
 extends 'Data::Feed::Parser::Base';
 use Data::Feed::Meta;
+use Carp qw(carp);
 
 our $VERSION = '0.01';
 
@@ -18,9 +19,14 @@ has '+feed' => (
         my $self = shift;
         my $parser = $self->parser;
         $parser->parse( $self->content_ref );
-        my $object = Data::Feed::Object->new(object => $parser->tags);
-
-        return [ $object ];
+        
+        if ($parser->parsed){
+            my $object = Data::Feed::Object->new(object => $parser->tags);
+            return [ $object ];
+        } else {
+            carp "Could not build an object with meta data"; 
+            return undef;
+        }
    }
 );
 

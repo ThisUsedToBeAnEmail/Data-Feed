@@ -1,7 +1,7 @@
 package Data::Feed::Meta;
 
 use Moose;
-use Carp qw/croak/;
+use Carp qw/carp croak/;
 
 our $VERSION = '0.01';
 
@@ -60,6 +60,15 @@ has 'site_name' => (
     default => sub { return shift->tags->{'site_name'} }
 );
 
+has 'parsed' => (
+    is => 'rw',
+    isa => 'Bool',
+    lazy => 1,
+    default => sub {
+        return 1 if shift->title;
+    },
+);
+
 sub parse {
     my ($self, $html) = @_;
 
@@ -73,6 +82,7 @@ sub parse {
     foreach my $line ( @lines ) {
         my ($type, $field, $content);
 
+        last if $line =~ m{</head>};
         next unless $line =~ m{<meta}xms;
         while ($line =~ /(?:^|\s+)(\S+)\s*=\s*("[^"]*"|\S*)/g) {
             # $1 - name, content or property
@@ -104,8 +114,12 @@ sub parse {
             $fields{$field} = $content;
         }
     } 
-   
-    $self->tags(\%fields);   
+  
+    if (($fields{title} && $fields{'title'} =~ m{\w}) and ($fields{'description'} && $fields{'description'} =~ m{\w})){
+        $self->tags(\%fields);
+    } else {
+        carp "The content returned is deemed unsuitable for meta parsing";
+    }   
 }
 
 __PACKAGE__->meta->make_immutable;

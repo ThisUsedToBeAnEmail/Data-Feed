@@ -1,11 +1,12 @@
 package Data::Feed;
 
 use Moose;
-use Carp qw(croak);
+use Carp qw(carp croak);
 use Data::Feed::Parser;
 use Data::Feed::Stream;
 use Data::Feed::Object;
 use Data::Dumper;
+use Scalar::Util;
 use 5.006;
 
 our $VERSION = '0.01';
@@ -36,12 +37,17 @@ sub parse {
         stream => Data::Feed::Stream->new(stream => $stream)->open_stream
     )->parse;
 
-    warn Dumper $self->count;
+    my $parsed = $parser->parse;
+    my $feed = $parser->feed;
+    return 1 unless $feed;
+    
+    warn Dumper scalar $parsed;
+
     if ($self->count >= 1) {
-        warn Dumper 'yooo';
-        $self->add(@{ $parser->parse });
+        warn Dumper 'its you';
+        $self->add(@{ $parsed });
     } else {
-      $self->feed($parser->parse);
+      $self->feed($parsed);
     }
 
     return 1;
