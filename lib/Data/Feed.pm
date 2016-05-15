@@ -29,22 +29,19 @@ has 'feed' => (
 sub parse {
     my ($self, $stream) = @_;
 
-    use Data::Dumper;
     if (!$stream) {
         croak "No stream was provided to parse().";
     }
+    
     my $parser = Data::Feed::Parser->new(
         stream => Data::Feed::Stream->new(stream => $stream)->open_stream
     )->parse;
 
     my $parsed = $parser->parse;
     my $feed = $parser->feed;
-    return 1 unless $feed;
-    
-    warn Dumper scalar $parsed;
+    $feed ? carp 'parse success' : carp 'parse failed';
 
     if ($self->count >= 1) {
-        warn Dumper 'its you';
         $self->add(@{ $parsed });
     } else {
       $self->feed($parsed);

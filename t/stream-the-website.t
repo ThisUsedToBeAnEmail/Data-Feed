@@ -10,7 +10,7 @@ use Data::Feed;
 
 use Data::Dumper;
 
-my $uri = "https://www.techcrunch.com";
+my $uri = "http://perltweet.yukikimoto.com/?lang=en";
 
 my $endpoints = scraper {
     process 'a', "links[]" => '@href';
@@ -24,13 +24,11 @@ foreach my $author (@{ $res->{links} }){
 }
 
 my $feed = Data::Feed->new();
-my $count = 0;
 for my $l  (keys %seen) {
-    $count++;
     next if $l =~ m{mailto};
     $feed->parse($l);
 
-    last if $count == 20;
+    last if $feed->count == 20;
 };
 
 warn Dumper $feed->count;
