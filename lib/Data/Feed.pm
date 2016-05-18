@@ -67,17 +67,6 @@ sub write {
     return 1;
 }
 
-sub convert_feed {
-    my ( $self, $type, $format ) = @_;
-
-    my @render;
-    foreach my $object ( $self->all ) {
-        push @render, $object->$type($format);
-    }
-
-    return @render;
-}
-
 sub render {
     my ( $self, $format ) = @_;
 
@@ -89,24 +78,35 @@ sub render {
 sub render_raw {
     my ( $self ) = shift;
 
-    my @render = $self->convert_feed('render', 'raw');
+    my @render = $self->_convert_feed('render', 'raw');
     return join "\n", @render;
 }
 
 sub render_text {
     my ( $self ) = shift;
 
-    my @render = $self->convert_feed('render', 'text');
+    my @render = $self->_convert_feed('render', 'text');
     return join "\n", @render;
 }
 
 sub render_json {
     my ( $self ) = shift;
     
-    my @render = $self->convert_feed('hash', 'json');
+    my @render = $self->_convert_feed('hash', 'json');
     
     my $json = JSON->new->allow_nonref;
     return $json->pretty->encode( \@render );
+}
+
+sub _convert_feed {
+    my ( $self, $type, $format ) = @_;
+
+    my @render;
+    foreach my $object ( $self->all ) {
+        push @render, $object->$type($format);
+    }
+
+    return @render;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -135,7 +135,6 @@ Version 0.5
     $feed->delete(Index1, Index2..);
     $feed->get(Index1, Index2..);
 
-    my $json = $feed->convert_feed('hash', 'json');
     $feed->write( 'path/to/empty.xml' );
     my $feed_text = $feed->render('text'); # TODO make Object an array of hash refs
 
