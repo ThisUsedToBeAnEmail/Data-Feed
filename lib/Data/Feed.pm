@@ -93,8 +93,9 @@ sub _render_json {
     foreach my $object ( $self->all ) {
         push @render, $object->hash('json');
     }
-    
-    return encode_json \@render;
+   
+    my $json = JSON->new->allow_nonref;
+    return $json->pretty->encode( \@render );
 }
 
 
