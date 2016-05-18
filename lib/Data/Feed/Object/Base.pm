@@ -12,13 +12,21 @@ has 'raw' => (
     default => q{},
 );
 
-has 'as_text' => (
+has 'text' => (
     is      => 'rw',
     lazy    => 1,
     default => sub {
         my $hs = HTML::Strip->new();
         my $string = $hs->parse(shift->raw);
         return encode_utf8($string);
+    },
+);
+
+has 'json' => ( 
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { 
+        return shift->text;
     },
 );
 

@@ -79,10 +79,10 @@ sub render {
     my @render;
     foreach my $key ( $self->keys ) {
         my $field = $self->$key;
-        my $type = 'as_' . $format;
+        my $type = $format;
         push @render, $field->$type;
     }
-    return join "\n", @render;
+    return join "\n", \@render;
 }
 
 sub hash {
@@ -93,7 +93,7 @@ sub hash {
     my %object;
     for my $key ( keys $self->object ) {
         my $field = $self->$key;
-        my $type = 'as_' . $format;
+        my $type = $format;
         $object{$key} = $self->$key->$type; 
     }
     return \%object;

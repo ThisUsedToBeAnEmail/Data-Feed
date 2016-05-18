@@ -5,7 +5,7 @@ extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
 
-has '+as_text' => (
+has '+text' => (
     default => sub { return 'todo' },
 );
 

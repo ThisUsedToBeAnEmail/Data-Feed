@@ -7,6 +7,8 @@ use Data::Feed::Stream;
 use Data::Feed::Object;
 use Data::Dumper;
 use Scalar::Util;
+use JSON;
+
 use 5.006;
 
 our $VERSION = '0.01';
@@ -23,6 +25,9 @@ has 'feed' => (
         get     => 'get',
         delete  => 'delete',
         add     => 'unshift',
+        map     => 'map',
+        grep    => 'grep',
+        empty   => 'is_empty',
     }
 );
 
@@ -32,14 +37,14 @@ sub parse {
     if (!$stream) {
         croak "No stream was provided to parse().";
     }
-    
+
     my $parser = Data::Feed::Parser->new(
         stream => Data::Feed::Stream->new(stream => $stream)->open_stream
     )->parse;
 
     my $parsed = $parser->parse;
     my $feed = $parser->feed;
-    $feed ? carp 'parse success' : carp 'parse failed';
+    $feed ? carp 'parse success' : return carp 'parse failed';
 
     if ($self->count >= 1) {
         $self->add(@{ $parsed });
@@ -66,16 +71,33 @@ sub render {
     my ( $self, $format ) = @_;
 
     $format ||= 'text';
+    
+    if ($format eq 'json') {
+        return $self->_render_json;
+    }
 
     my @render;
     foreach my $object ( $self->all ) {
-        push @render, &$object->render($format);
+        push @render, $object->render($format);
     }
 
     my $output = join "\n/", @render;
 
     return $output;
 }
+
+sub _render_json {
+    my ( $self ) = shift;
+    
+    my @render;
+    foreach my $object ( $self->all ) {
+        push @render, $object->hash('json');
+    }
+    
+    return encode_json \@render;
+}
+
+
 
 __PACKAGE__->meta->make_immutable;
 

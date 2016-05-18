@@ -50,30 +50,23 @@ subtest 'object options' => sub {
 =cut
 };
 
-=pod
 subtest 'object render options' => sub {
    test_feed({
-        action => 'as_raw',
-        feed => $feed
+        action => 'render',
+        feed => $feed,
+        input => 'raw'
     });
     test_feed({
-        action => 'as_html',
-        feed => $feed
+        action => 'render',
+        feed => $feed,
+        input => 'text'
     });
     test_feed({
-        action => 'as_xml',
-        feed => $feed
-    });
-    test_feed({
-        action => 'as_plain',
-        feed => $feed
-    });
-    test_feed({
-        action => 'as_meta',
-        feed => $feed
+        action => 'render',
+        feed => $feed,
+        input => 'json'
     });
 };
-=cut
 
 done_testing();
 

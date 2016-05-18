@@ -10,7 +10,7 @@ use Data::Feed;
 
 use Data::Dumper;
 
-my $uri = "http://perltweet.yukikimoto.com/?lang=en";
+my $uri = "http://www.bbc.co.uk/technology";
 
 my $endpoints = scraper {
     process 'a', "links[]" => '@href';
@@ -34,6 +34,6 @@ for my $l  (keys %seen) {
 warn Dumper $feed->count;
 
 foreach my $ff ( $feed->all ) {
-    warn Dumper $ff->title->raw;
-    warn Dumper $ff->description->raw;
+    warn Dumper $ff->title->as_text;
+    warn Dumper $ff->description->as_text;
 }
