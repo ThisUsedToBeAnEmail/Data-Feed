@@ -34,6 +34,6 @@ for my $l  (keys %seen) {
 warn Dumper $feed->count;
 
 foreach my $ff ( $feed->all ) {
-    warn Dumper $ff->title->as_text;
-    warn Dumper $ff->description->as_text;
+    warn Dumper $ff->title->text;
+    warn Dumper $ff->description->text;
 }

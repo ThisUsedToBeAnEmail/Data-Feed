@@ -71,26 +71,44 @@ sub render {
     my ( $self, $format ) = @_;
 
     $format ||= 'text';
-    my $renderer = 'render_' . $format; 
-    return $self->$renderer; 
+    $format = '_' . $format; 
+    return $self->$format('render'); 
 }
 
-sub render_raw {
-    my ( $self ) = shift;
+sub hash {
+    my ( $self, $format ) = @_;
 
-    my @render = $self->_convert_feed('render', 'raw');
-    return join "\n", @render;
+    $format ||= 'text';
+    $format = '_' . $format; 
+    return $self->$format('hash'); 
 }
 
-sub render_text {
-    my ( $self ) = shift;
+sub _raw {
+    my ( $self, $type ) = @_;
 
-    my @render = $self->_convert_feed('render', 'text');
-    return join "\n", @render;
+    my @render = $self->_convert_feed($type, 'raw');
+    
+    if ($type eq q{render}) {
+        return join "\n", @render;
+    } else {
+        return \@render;
+    }
 }
 
-sub render_json {
-    my ( $self ) = shift;
+sub _text {
+    my ( $self, $type ) = @_;
+
+    my @render = $self->_convert_feed($type, 'text');
+    
+    if ($type eq q{render}) {
+        return join "\n", @render;
+    } else {
+        return \@render;
+    }
+}
+
+sub _json {
+    my ( $self ) = @_;
     
     my @render = $self->_convert_feed('hash', 'json');
     
