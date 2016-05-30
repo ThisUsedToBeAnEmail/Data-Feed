@@ -52,7 +52,7 @@ You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Met
 
 - URI
 
-        # any rss/atom feed or a web page that contains og or twitter markup
+        # any rss/atom feed
         $feed->parse( 'http://examples.com/feed.xml' );
 
 - File
