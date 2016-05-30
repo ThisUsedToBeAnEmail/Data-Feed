@@ -23,7 +23,7 @@ has '+feed' => (
                 title   => $item->{title},
                 link    => $item->{link},
                 description => $item->{description},
-                pub_date => $item->{pubDate},
+                date => $item->{pubDate},
             );
 
             my $object = Data::Feed::Object->new(object => \%args);

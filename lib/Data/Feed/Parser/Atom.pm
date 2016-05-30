@@ -23,7 +23,7 @@ has '+feed' => (
                 title => $item->title,   
                 link => $item->link->href,
                 description => $item->summary,
-                pub_date => $item->updated,
+                date => $item->updated,
                 as_xml => $item->as_xml
             );
         

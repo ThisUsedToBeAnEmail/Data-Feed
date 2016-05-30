@@ -4,42 +4,53 @@ use Test::More;
 
 BEGIN {
     use_ok("Data::Feed");
+    use_ok("Data::Feed::Object");
 }
 
 my $feed = Data::Feed->new();
 $feed->parse( 't/data/rss20.xml' );
 
-subtest 'object options' => sub {
-    test_feed({
-        action => 'all',
+subtest 'object attributes set' => sub {
+    test_attributes({
+        action => 'title',
         feed => $feed,
+        isa => 'Data::Feed::Object::Title'
     });
-    test_feed({
-        action => 'count',
+    test_attributes({
+        action => 'link',
         feed => $feed,
-        output => 2,
+        isa => 'Data::Feed::Object::Link'
     });
-    test_feed({
-        action => 'get',
+    test_attributes({
+        action => 'description',
         feed => $feed,
-        input => 1,
-        isa_object => 'Data::Feed::Object'
+        isa => 'Data::Feed::Object::Description'
     });
-    test_feed({
-        action => 'delete',
+    test_attributes({
+        action => 'image',
         feed => $feed,
-        input => 1,
+        isa => 'Data::Feed::Object::Image'
     });
-    test_feed({
-        action => 'count',
+    test_attributes({
+        action => 'date',
         feed => $feed,
-        output => 1
+        isa => 'Data::Feed::Object::Date'
     });
 };
 
 done_testing();
 
-sub test_feed {
+sub test_attributes {
+    my ( $args ) = @_;
+
+    $feed = $args->{feed};
+    my $first = $feed->get(0);
+    my $action = $args->{action};
+
+    isa_ok($first->$action, $args->{isa}, "Attribute Set: $args->{isa}");
+}
+
+sub test_options {
     my ($args) = @_;
 
     my $feed = $args->{feed};

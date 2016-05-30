@@ -14,20 +14,19 @@ use 5.006;
 our $VERSION = '0.01';
 
 has 'feed' => (
-    is  =>  'rw',
+    is => 'rw',
     isa => 'ArrayRef[Data::Feed::Object]',
     lazy => 1,
-    traits  => ['Array'],
+    traits => ['Array'],
     default => sub { [ ] },
     handles => {
-        all     => 'elements',
-        count   => 'count',
-        get     => 'get',
-        delete  => 'delete',
-        add     => 'unshift',
-        map     => 'map',
-        grep    => 'grep',
-        empty   => 'is_empty',
+        all => 'elements',
+        count => 'count',
+        get => 'get',
+        pop => 'pop',
+        delete => 'delete',
+        insert => 'unshift',
+        is_empty => 'is_empty',
     }
 );
 
@@ -47,7 +46,7 @@ sub parse {
     $feed ? carp 'parse success' : return carp 'parse failed';
 
     if ($self->count >= 1) {
-        $self->add(@{ $parsed });
+        $self->insert(@{ $parsed });
     } else {
       $self->feed($parsed);
     }
@@ -167,7 +166,7 @@ Version 0.5
         $object->link->raw;
         $object->description->raw;
         $object->image->raw;
-        $object->pub_date->raw;
+        $object->date->raw;
         
         # missing lots
         $entry->title->as_text;

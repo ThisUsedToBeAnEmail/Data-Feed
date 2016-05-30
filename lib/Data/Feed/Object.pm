@@ -6,7 +6,7 @@ use Data::Feed::Object::Title;
 use Data::Feed::Object::Link;
 use Data::Feed::Object::Description;
 use Data::Feed::Object::Image;
-use Data::Feed::Object::PubDate;
+use Data::Feed::Object::Date;
 use Data::Feed::Object::AsXml;
 
 our $VERSION = '0.01';
@@ -17,59 +17,24 @@ has 'object' => (
     lazy => 1,
     default => sub { { } },
     handles => {
-       keys   => 'keys',
+       object_keys => 'keys',
        fields => 'get',
        edit   => 'set',
     },
 );
 
-has 'title' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Title->new(raw => shift->object->{'title'});
-    }
-);
-
-has 'link' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Link->new(raw => shift->object->{'link'});
-    }
-);
-
-has 'description' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Description->new(raw => shift->object->{'description'});
-    }
-);
-
-has 'image' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::Image->new(raw => shift->object->{'image'});
-    }
-);
-
-has 'pub_date' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::PubDate->new(raw => shift->object->{'pubDate'});
-    }
-);
-
-has 'as_xml' => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        return Data::Feed::Object::AsXml->new(raw => shift->object->{'as_xml'});
-    }
-);
+my @fields = qw(title link description image date);
+foreach my $field (@fields){
+    has $field => (
+        is => 'ro',
+        lazy => 1,
+        default => sub {
+            my $self = shift;
+            my $class = 'Data::Feed::Object::' . ucfirst($field);
+            return $class->new(raw => $self->object->{$field});
+        }
+    );
+}
 
 sub render {
     my ( $self, $format ) = @_;
@@ -77,7 +42,7 @@ sub render {
     $format ||= 'text';
     
     my @render;
-    foreach my $key ( $self->keys ) {
+    foreach my $key ( $self->object_keys ) {
         my $field = $self->$key;
         my $type = $format;
         push @render, $field->$type;

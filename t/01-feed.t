@@ -9,90 +9,102 @@ BEGIN {
 my $feed = Data::Feed->new();
 $feed->parse( 't/data/rss20.xml' );
 
-subtest 'object options' => sub {
-    test_feed({
+subtest 'feed options' => sub {
+    plan tests => 13;
+    test_options({
         action => 'all',
         feed => $feed,
     });
-    test_feed({
+    test_options({
         action => 'count',
         feed => $feed,
         output => 2,
     });
-    test_feed({
+    test_options({
         action => 'get',
         feed => $feed,
         input => 1,
         isa_object => 'Data::Feed::Object'
     });
-    test_feed({
+    test_options({
+        action => 'pop',
+        feed => $feed,
+        isa_object => 'Data::Feed::Object'
+    });
+    test_options({
+        action => 'insert',
+        feed => $feed,
+        input =>  bless( { 
+            'object' => {
+                'title' => 'Entry Two',
+                'link' => 'http://localhost/weblog/2004/05/entry_two.html',
+                'description' => 'Hello!...',
+                'pub_date' => 'Sat, 29 May 2004 23:39:25 -0800'
+            } }, 'Data::Feed::Object' ),
+        count => 2,
+    });         
+    test_options({
         action => 'delete',
         feed => $feed,
         input => 1,
+        count => 1,
     });
-    test_feed({
-        action => 'count',
+   test_options({
+        action => 'pop', # cant call delete on index 0
         feed => $feed,
-        output => 1
     });
-    # EVERYTHING BELOW THIS POINT IS BROKEN
-=pod
-    test_feed({
-        action => 'push',
-        feed => $feed
-    });
-    test_feed({
-        action => 'return_range',
+    test_options({
+        action => 'is_empty',
         feed => $feed,
-        input => { start => 0, end => 1 },
-        isa_output => 'Data::Feed', 
     });
-=cut
 };
 
-subtest 'object render options' => sub {
-   test_feed({
-        action => 'render',
-        feed => $feed,
-        input => 'raw'
-    });
-    test_feed({
-        action => 'render',
-        feed => $feed,
-        input => 'text'
-    });
-    test_feed({
-        action => 'render',
-        feed => $feed,
-        input => 'json'
-    });
+subtest 'feed parse' => sub {
+    plan skip_all => 'fix fields first';
+};
+
+subtest 'feed render' => sub {
+    plan skip_all => 'fix fields first';
+};
+
+subtest 'feed hash' => sub {
+    plan skip_all => 'fix fields first';
+};
+
+subtest 'feed write' => sub {
+    plan skip_all => 'fix fields first';
 };
 
 done_testing();
 
-sub test_feed {
+sub test_options {
     my ($args) = @_;
 
     my $feed = $args->{feed};
     my $action = $args->{action};
     my $input = $args->{input};
-    my $output = $args->{output};
-    my $isa_object = $args->{isa_object};
     my $test;
 
     if ($input) {
-        ok($test = $feed->$action($input));
+        ok($test = $feed->$action($input), "action: $action");
     }
     else {
-        ok($test = $feed->$action);
+        ok($test = $feed->$action, "action: $action");
     }
 
-    if ($output) {
-        is($test, $output, "correct output: $action");
+    if (my $output = $args->{output}) {
+        is($test, $output, "correct output for action: $action - $output");
     }
-    elsif ($isa_object) {
-       isa_ok($test, $isa_object, "correct output: $action");
+    elsif (my $isa_object = $args->{isa_object}) {
+        $input ||= 'no input';
+        isa_ok($test, $isa_object, "correct output for action: $action input: $input");
+    }
+
+    if (my $count = $args->{count}){
+        is($feed->count, $count, "correct count: $count after action $action");
     }
 }
+
+
 
 1;

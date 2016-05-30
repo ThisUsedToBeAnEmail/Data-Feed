@@ -1,4 +1,4 @@
-package Data::Feed::Object::PubDate;
+package Data::Feed::Object::Date;
 
 use Moo;
 extends 'Data::Feed::Object::Base';
