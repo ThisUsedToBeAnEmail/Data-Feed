@@ -30,14 +30,6 @@ has 'json' => (
     },
 );
 
-has 'html' => (
-    is      => 'rw',
-    lazy    => 1,
-    default => sub { 
-        return shift->raw;
-    },
-);
-
 __PACKAGE__->meta->make_immutable;
 
 =head1 AUTHOR

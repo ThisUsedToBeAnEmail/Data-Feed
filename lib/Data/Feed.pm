@@ -55,12 +55,12 @@ sub parse {
 }
 
 sub write {
-    my ($self, $stream) = @_;
+    my ($self, $stream, $type) = @_;
 
     if (!$stream || $stream =~ m{^http}) {
         croak "No valid stream was provided to write"; 
     }
-    
+
     Data::Feed::Stream->new(stream => $stream)->write_file($self->render);
     
     return 1;
@@ -74,12 +74,12 @@ sub render {
     return $self->$format('render'); 
 }
 
-sub hash {
+sub generate {
     my ( $self, $format ) = @_;
 
     $format ||= 'text';
     $format = '_' . $format; 
-    return $self->$format('hash'); 
+    return $self->$format('generate'); 
 }
 
 sub _raw {
@@ -109,7 +109,7 @@ sub _text {
 sub _json {
     my ( $self ) = @_;
     
-    my @render = $self->_convert_feed('hash', 'json');
+    my @render = $self->_convert_feed('render', 'json');
     
     my $json = JSON->new->allow_nonref;
     return $json->pretty->encode( \@render );
@@ -233,7 +233,15 @@ returns the count of the current data feed
 
 =head2 get
 
-accepts an integer and returns an element of the feed by its Array index
+accepts an integer and returns an Data::Feed::Object from feed by its Array index
+
+=over
+
+=back
+
+=head2 pop
+
+pop the first Data::Feed::Object from the current feed
 
 =over
 
@@ -241,16 +249,23 @@ accepts an integer and returns an element of the feed by its Array index
 
 =head2 delete
 
-accepts an integer and deletes the relevant elemant based on its Array index
+accepts an integer and deletes the relevant Data::Feed::Object based on its Array index
 
 =over
 
 =back
 
-=head2 write
+=head2 insert
 
-accecpts a local file path and writes the current feed object 
-**not usefull untill i fix render
+insert an 'Data::Feed::Object' into the feed
+
+=over
+
+=back
+
+=head2 is_empty
+
+returns true if Data::Feed is empty.
 
 =over
 
@@ -258,16 +273,27 @@ accecpts a local file path and writes the current feed object
 
 =head2 render
 
+render the feed using the passed in format, defaults to text.
+    
+    # raw - as taken from the feed
+    # text - stripped to plain text
+    # json 
+
+    $feed->render('raw');
+
 =over
 
 =back
 
-=head2 hash
+=head2 generate
+
+returns the feed object as a Array of hashes but with the values rendered, key being the field. You can also pass in a format.
+    
+    $feed->hash('text');
 
 =over
 
 =back
-
 
 =head1 AUTHOR
 

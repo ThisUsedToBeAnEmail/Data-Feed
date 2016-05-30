@@ -46,7 +46,7 @@ sub render {
     return join "\n", \@render;
 }
 
-sub hash {
+sub generate {
     my ( $self, $format ) = @_;
    
     $format ||= 'text';

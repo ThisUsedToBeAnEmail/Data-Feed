@@ -19,7 +19,7 @@ Version 0.5
     $feed->get(Index1, Index2..);
 
     $feed->write( 'path/to/empty.xml' );
-    $feed->render('text'); # TODO make Object an array of hash refs
+    my $feed_text = $feed->render('text'); # TODO make Object an array of hash refs
 
     foreach my $object ( $feed->all ) {
         $object->render('text'); # text, html, xml..
@@ -32,7 +32,7 @@ Version 0.5
         $object->link->raw;
         $object->description->raw;
         $object->image->raw;
-        $object->pub_date->raw;
+        $object->date->raw;
         
         # missing lots
         $entry->title->as_text;
@@ -73,20 +73,39 @@ returns the count of the current data feed
 
 ## get
 
-accepts an integer and returns an element of the feed by its Array index
+accepts an integer and returns an Data::Feed::Object from feed by its Array index
+
+## pop
+
+pop the first Data::Feed::Object from the current feed
 
 ## delete
 
-accepts an integer and deletes the relevant elemant based on its Array index
+accepts an integer and deletes the relevant Data::Feed::Object based on its Array index
 
-## write
+## insert
 
-accecpts a local file path and writes the current feed object 
-\*\*not usefull untill i fix render
+insert an 'Data::Feed::Object' into the feed
+
+## is\_empty
+
+returns true if Data::Feed is empty.
 
 ## render
 
-## hash
+render the feed using the passed in format, defaults to text.
+
+    # raw - as taken from the feed
+    # text - stripped to plain text
+    # json 
+
+    $feed->render('raw');
+
+## generate
+
+returns the feed object as a Array of hashes but with the values rendered, key being the field. You can also pass in a format.
+
+    $feed->hash('text');
 
 # AUTHOR
 
