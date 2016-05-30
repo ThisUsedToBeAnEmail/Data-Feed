@@ -2,12 +2,7 @@ package Data::Feed::Object;
 
 use Moose;
 use Carp qw/croak/;
-use Data::Feed::Object::Title;
-use Data::Feed::Object::Link;
-use Data::Feed::Object::Description;
-use Data::Feed::Object::Image;
-use Data::Feed::Object::Date;
-use Data::Feed::Object::AsXml;
+use Class::Load qw/load_class/;
 
 our $VERSION = '0.01';
 
@@ -31,6 +26,7 @@ foreach my $field (@fields){
         default => sub {
             my $self = shift;
             my $class = 'Data::Feed::Object::' . ucfirst($field);
+            load_class($class);
             return $class->new(raw => $self->object->{$field});
         }
     );
