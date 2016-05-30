@@ -1,64 +1,9 @@
-package Data::Feed::Object;
+package Data::Feed::Object::Author;
 
-use Moose;
-use Carp qw/croak/;
-use Class::Load qw/load_class/;
+use Moo;
+extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
-
-has 'object' => (
-    traits => ['Hash'],
-    is  => 'ro',
-    lazy => 1,
-    default => sub { { } },
-    handles => {
-       object_keys => 'keys',
-       fields => 'get',
-       edit   => 'set',
-    },
-);
-
-my @fields = qw(title description image date author category permalink comment link);
-foreach my $field (@fields){
-    has $field => (
-        is => 'ro',
-        lazy => 1,
-        default => sub {
-            my $self = shift;
-            my $class = 'Data::Feed::Object::' . ucfirst($field);
-            load_class($class);
-            return $class->new(raw => $self->object->{$field});
-        }
-    );
-}
-
-sub render {
-    my ( $self, $format ) = @_;
-
-    $format ||= 'text';
-    
-    my @render;
-    foreach my $key ( $self->object_keys ) {
-        my $field = $self->$key;
-        my $type = $format;
-        push @render, $field->$type;
-    }
-    return join "\n", \@render;
-}
-
-sub hash {
-    my ( $self, $format ) = @_;
-   
-    $format ||= 'text';
-
-    my %object;
-    for my $key ( keys $self->object ) {
-        my $field = $self->$key;
-        my $type = $format;
-        $object{$key} = $self->$key->$type; 
-    }
-    return \%object;
-}
 
 __PACKAGE__->meta->make_immutable;
 

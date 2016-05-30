@@ -48,7 +48,7 @@ sub parse {
     if ($self->count >= 1) {
         $self->insert(@{ $parsed });
     } else {
-      $self->feed($parsed);
+        $self->feed($parsed);
     }
 
     return 1;

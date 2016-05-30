@@ -1,13 +1,9 @@
-package Data::Feed::Object::AsXml;
+package Data::Feed::Object::Tagline;
 
 use Moo;
 extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
-
-has '+text' => (
-    default => sub { return 'todo' },
-);
 
 __PACKAGE__->meta->make_immutable;
 

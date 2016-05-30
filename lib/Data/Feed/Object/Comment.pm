@@ -1,34 +1,9 @@
-package Data::Feed::Parser::Meta;
+package Data::Feed::Object::Comment;
 
-use Moose;
-extends 'Data::Feed::Parser::Base';
-use Data::Feed::Meta;
-use Carp qw(carp);
+use Moo;
+extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
-
-has '+parser' => (
-    default => sub {
-        my $self = shift;
-        return Data::Feed::Meta->new();
-    },
-);
-
-has '+feed' => (
-    default => sub {
-        my $self = shift;
-        my $parser = $self->parser;
-        $parser->parse( $self->content_ref );
-        
-        if ($parser->parsed){
-            my $object = Data::Feed::Object->new(object => $parser->tags);
-            return [ $object ];
-        } else {
-            carp "Could not build an object with meta data"; 
-            return undef;
-        }
-   }
-);
 
 __PACKAGE__->meta->make_immutable;
 
