@@ -109,7 +109,7 @@ sub _text {
 sub _json {
     my ( $self ) = @_;
     
-    my @render = $self->_convert_feed('render', 'json');
+    my @render = $self->_convert_feed('generate', 'json');
     
     my $json = JSON->new->allow_nonref;
     return $json->pretty->encode( \@render );
