@@ -76,7 +76,7 @@ sub write_file {
     my $stream = $self->stream;
 
     open FILE, ">", $stream  or croak "could not open file: $stream";
-    print FILE $feed;
+    print $feed;
     close FILE;
 }
 

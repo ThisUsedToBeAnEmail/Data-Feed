@@ -46,7 +46,7 @@ has 'feed' => (
             my %args;
             my $potential = $self->potential_fields;
 
-            while (my ($field, $action) = each $potential) {
+            while (my ($field, $action) = each %{ $potential }) {
                 if (my $value = $self->get_value($item, $action)){
                     $args{$field} = $value;
                 }

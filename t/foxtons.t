@@ -10,7 +10,7 @@ BEGIN {
 my $feed = Data::Feed->new();
 $feed->parse( 'http://www.foxtons.co.uk/feeds?price_from=0&price_to=175&location_ids=296&search_type=LL&result_view=rss' );
 
-warn Dumper $feed->hash('raw');
+warn Dumper $feed->render('json');
 
 done_testing();
 

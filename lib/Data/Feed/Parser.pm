@@ -21,7 +21,8 @@ has 'parse_tag' => (
         my $self = shift;
         my $content = $self->stream;
         my $tag;
-
+        use Data::Dumper;
+        warn Dumper $content;
         while ( $$content =~ /<(\S+)/sg) {
             (my $t = $1) =~ tr/a-zA-Z0-9:\-\?!//cd;
             my $first = substr $t, 0, 1;
@@ -40,7 +41,7 @@ has 'parser_type' => (
     lazy    => 1,
     default => sub {
         my $self = shift;
-        
+         
         my $tag = $self->parse_tag;
         return 'RSS' if $tag =~ /^(?:rss|rdf)$/i;
         return 'Atom' if $tag =~ /^feed/i;

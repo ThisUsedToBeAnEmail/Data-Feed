@@ -52,7 +52,7 @@ sub generate {
     $format ||= 'text';
 
     my %object;
-    for my $key ( keys $self->object ) {
+    for my $key ( keys %{ $self->object } ) {
         my $field = $self->$key;
         my $type = $format;
         $object{$key} = $self->$key->$type; 
