@@ -217,7 +217,7 @@ You can currently build Feeds by parsing xml (RSS, ATOM) and static HTML via Met
 
 =head2 all
 
-returns all elements in the feed
+returns all elements in the current feed
 
 =over
 
