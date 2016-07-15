@@ -8,9 +8,9 @@ BEGIN {
 }
 
 my $feed = Data::Feed->new();
-$feed->parse( 'http://www.cpantesters.org/author/LNATION.rss' );
+$feed->parse( 'http://blog.mailchimp.com/feed' );
 
-warn Dumper $feed->render('json');
+warn Dumper $feed->generate('text');
 
 done_testing();
 
