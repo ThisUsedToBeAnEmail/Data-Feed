@@ -1,63 +1,9 @@
-package Data::Feed::Parser;
+package Data::Feed::Object::Content;
 
 use Moo;
-use Carp qw/croak/;
-use Data::Dumper;
-use Data::Feed::Parser::RSS;
-use Data::Feed::Parser::Atom;
+extends 'Data::Feed::Object::Base';
 
 our $VERSION = '0.01';
-
-has 'stream' => (
-    is  => 'ro',
-    lazy => 1,
-    default => q{}
-);
-
-has 'parse_tag' => (
-    is  => 'ro',
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        my $content = $self->stream;
-        warn Dumper $content;
-        my $tag;
-        while ( $$content =~ /<(\S+)/sg) {
-            (my $t = $1) =~ tr/a-zA-Z0-9:\-\?!//cd;
-            my $first = substr $t, 0, 1;
-            $tag = $t, last unless $first eq '?' || $first eq '!';
-        }
-    
-        croak 'Could not find the first XML element' unless $tag;
-
-        $tag =~ s/^,*://;
-        return $tag;
-    }
-);
-
-has 'parser_type' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-         
-        my $tag = $self->parse_tag;
-        return 'RSS' if $tag =~ /^(?:rss|rdf)$/i;
-        return 'Atom' if $tag =~ /^feed/i;
-        return croak "Could not find a parser";
-    }
-);
-
-has 'parse' => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $type = $self->parser_type;
-        my $class = "Data::Feed::Parser::" . $type;
-        return $class->new(content_ref => $self->stream);
-    }
-);
 
 __PACKAGE__->meta->make_immutable;
 

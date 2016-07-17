@@ -18,7 +18,7 @@ has 'object' => (
     },
 );
 
-my @fields = qw(title description image date author category permalink comment link);
+my @fields = qw(title description image date author category permalink comment link content);
 foreach my $field (@fields){
     has $field => (
         is => 'ro',

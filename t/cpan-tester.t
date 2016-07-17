@@ -8,7 +8,7 @@ BEGIN {
 }
 
 my $feed = Data::Feed->new();
-$feed->parse( 'http://blog.mailchimp.com/feed' );
+$feed->parse( 'https://litmus.com/blog/feed/' );
 
 warn Dumper $feed->generate('text');
 

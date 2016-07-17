@@ -31,6 +31,8 @@ has 'potential_fields' => (
             permalink => 'permaLink',  
             comment => 'comments',
             link => 'link',
+            content => 'content',
+            image => 'image',
         };
     },
 );
@@ -62,7 +64,8 @@ has 'feed' => (
 
 sub parse {
     my ($self, $content_ref) = shift;
-    
+    use Data::Dumper;
+    warn Dumper $self->feed;
     return $self->feed;
 }
 
