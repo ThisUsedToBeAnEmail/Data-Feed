@@ -2,6 +2,7 @@ package Data::Feed::Parser::Base;
 
 use Moose;
 use Data::Feed::Object;
+use HTML::LinkExtor;
 
 our $VERSION = '0.01';
 
@@ -49,8 +50,15 @@ has 'feed' => (
             my $potential = $self->potential_fields;
 
             while (my ($field, $action) = each %{ $potential }) {
-                if (my $value = $self->get_value($item, $action)){
+                my $value;
+                if ($value = $self->get_value($item, $action)){
                     $args{$field} = $value;
+                }
+                if ($action eq 'image' && !$value) {
+                    my $content = $self->get_value($item, 'content');
+                    if ( $value = $self->first_image_tag($content) ){
+                        $args{$field} = $value;
+                    }
                 }
             }
 
@@ -63,10 +71,20 @@ has 'feed' => (
 );
 
 sub parse {
-    my ($self, $content_ref) = shift;
-    use Data::Dumper;
-    warn Dumper $self->feed;
+    my ($self) = shift;
     return $self->feed;
+}
+
+sub first_image_tag {
+    my ($self, $content) = @_;
+
+    my $p = HTML::LinkExtor->new;
+    $p->parse($content);
+    my @links = $p->links;
+    for (@links) {
+        my ($img, %attr) = @$_ if $_->[0] eq 'img';
+        return $attr{src} if $img;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
