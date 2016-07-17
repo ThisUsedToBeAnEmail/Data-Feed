@@ -56,6 +56,7 @@ has 'feed' => (
                 }
                 if ($action eq 'image' && !$value) {
                     my $content = $self->get_value($item, 'content');
+                    next unless $content;
                     if ( $value = $self->first_image_tag($content) ){
                         $args{$field} = $value;
                     }
