@@ -54,11 +54,14 @@ has 'feed' => (
                 if ($value = $self->get_value($item, $action)){
                     $args{$field} = $value;
                 }
-                if ($action eq 'image' && !$value) {
+                elsif ($action eq 'image') {
                     my $content = $self->get_value($item, 'content');
-                    next unless $content;
-                    if ( $value = $self->first_image_tag($content) ){
+                    if ( $content ) {
+                        $value = $self->first_image_tag($content);
                         $args{$field} = $value;
+                    }
+                    else {
+                        next;
                     }
                 }
             }
@@ -84,7 +87,10 @@ sub first_image_tag {
     my @links = $p->links;
     for (@links) {
         my ($img, %attr) = @$_ if $_->[0] eq 'img';
-        return $attr{src} if $img;
+        if ($img) {
+            next if $attr{src} =~ m{twitter|facebook|google|pinterest|tumblr|linkedin};
+            return $attr{src};
+        }
     }
 }
 
