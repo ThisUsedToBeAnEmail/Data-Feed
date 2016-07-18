@@ -20,7 +20,7 @@ has 'parse_tag' => (
     default => sub {
         my $self = shift;
         my $content = $self->stream;
-        warn Dumper $content;
+       
         my $tag;
         while ( $$content =~ /<(\S+)/sg) {
             (my $t = $1) =~ tr/a-zA-Z0-9:\-\?!//cd;

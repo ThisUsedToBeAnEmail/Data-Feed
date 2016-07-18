@@ -50,7 +50,7 @@ sub open_url {
         croak "This feed has been permantly removed";
     }
 
-    my $content = $res->decoded_content(charset => 'none');
+   my $content = $res->decoded_content(charset => 'utf8');
 
     return \$content;
 }

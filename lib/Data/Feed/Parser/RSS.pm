@@ -23,7 +23,7 @@ sub get_value {
         return $value;
     }
     elsif ( is_arrayref($value)){
-        return join ', ', @{ $value };
+        return $value;
     }
     elsif ( is_hashref($value) ){
         return $value->{encoded};

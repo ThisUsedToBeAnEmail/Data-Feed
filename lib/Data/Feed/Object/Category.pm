@@ -2,8 +2,30 @@ package Data::Feed::Object::Category;
 
 use Moo;
 extends 'Data::Feed::Object::Base';
+use HTML::Strip;
 
 our $VERSION = '0.01';
+
+has '+raw' => (
+    default => sub { [ ] },
+);
+
+has '+text' => ( 
+    default => sub {
+        my $hs = HTML::Strip->new();
+        my $content = shift->raw;
+        my $string = join ', ',  grep { $hs->parse($_) } @{ $content };
+        return $string;
+    } 
+);
+
+has 'json' => (
+    is => 'rw',
+    lazy => 1,
+    default => sub {
+        return shift->raw;
+    },
+);
 
 __PACKAGE__->meta->make_immutable;
 

@@ -10,7 +10,12 @@ BEGIN {
 my $feed = Data::Feed->new();
 $feed->parse( 'https://litmus.com/blog/feed/' );
 
-warn Dumper $feed->generate('text');
+foreach my $f ( $feed->all ) {
+    warn Dumper $f->category->raw;
+    warn Dumper $f->category->text;
+    warn Dumper $f->category->json;
+}
+
 
 done_testing();
 
